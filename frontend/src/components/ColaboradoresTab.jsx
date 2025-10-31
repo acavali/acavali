@@ -184,7 +184,7 @@ export default function ColaboradoresTab() {
                     <SelectTrigger data-testid="select-turno">
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="z-[9999]">
                       <SelectItem value="dia">Dia</SelectItem>
                       <SelectItem value="noite">Noite</SelectItem>
                     </SelectContent>
