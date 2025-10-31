@@ -152,7 +152,7 @@ export default function DespesasTab() {
                     <SelectTrigger data-testid="select-categoria">
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="z-[9999]">
                       {categorias.map(cat => (
                         <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
                       ))}
