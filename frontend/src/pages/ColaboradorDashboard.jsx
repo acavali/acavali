@@ -343,17 +343,7 @@ export default function ColaboradorDashboard({ user, onLogout }) {
                 value={fecharForm.litros_diesel}
                 onChange={(e) => setFecharForm({ ...fecharForm, litros_diesel: parseFloat(e.target.value) })}
                 data-testid="input-litros-diesel-turno"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Custo Diesel (€)</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={fecharForm.custo_diesel}
-                onChange={(e) => setFecharForm({ ...fecharForm, custo_diesel: parseFloat(e.target.value) })}
-                data-testid="input-custo-diesel-turno"
+                placeholder="Quantidade de litros abastecidos"
               />
             </div>
 
