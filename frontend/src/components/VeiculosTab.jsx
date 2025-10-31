@@ -93,11 +93,57 @@ export default function VeiculosTab() {
       });
       toast.success("Veículo criado com sucesso!");
       setOpenVeiculoDialog(false);
-      setVeiculoForm({ placa: "", modelo: "", turno: "" });
+      setVeiculoForm({ placa: "", modelo: "", turno: "", custo_litro_diesel: 1.50 });
       fetchVeiculos();
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.detail || "Erro ao criar veículo");
+    }
+  };
+
+  const handleBuscarPrecoCombutivel = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API}/mock/fuel-price/milan`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      setVeiculoForm({ 
+        ...veiculoForm, 
+        custo_litro_diesel: response.data.price_per_liter 
+      });
+      
+      toast.success(`Preço atualizado: €${response.data.price_per_liter}/L em Milão`, {
+        description: 'Dados simulados - Mock API'
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao buscar preço do combustível");
+    }
+  };
+
+  const handleBuscarConsumoVeiculo = async () => {
+    if (!veiculoForm.modelo || veiculoForm.modelo.trim() === "") {
+      toast.error("Digite o modelo do veículo primeiro");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(
+        `${API}/mock/vehicle-consumption/${encodeURIComponent(veiculoForm.modelo)}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      toast.success(
+        `Consumo: ${response.data.km_per_liter} km/L`, 
+        {
+          description: `Cidade: ${response.data.consumption_l_per_100km.city}L/100km | Estrada: ${response.data.consumption_l_per_100km.highway}L/100km`
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao buscar consumo do veículo");
     }
   };
 
