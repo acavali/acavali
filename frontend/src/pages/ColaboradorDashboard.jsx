@@ -6,8 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { LogOut, Plus, Trash2, Battery, Move, RefreshCw } from "lucide-react";
+import { LogOut, Plus, Trash2, Battery, Move, RefreshCw, Truck } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -26,21 +27,34 @@ const taskLabels = {
 
 export default function ColaboradorDashboard({ user, onLogout }) {
   const [tasks, setTasks] = useState([]);
+  const [veiculos, setVeiculos] = useState([]);
+  const [registrosVeiculos, setRegistrosVeiculos] = useState([]);
   const [tipo, setTipo] = useState("");
   const [quantidade, setQuantidade] = useState(1);
+  const [dataTask, setDataTask] = useState(new Date().toISOString().split('T')[0]);
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState({ total: 0, custo: 0 });
+  
+  // Vehicle form
+  const [veiculoForm, setVeiculoForm] = useState({
+    veiculo_id: "",
+    km_inicial: 0,
+    km_final: 0,
+    litros_diesel: 0,
+    custo_diesel: 0
+  });
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+    fetchVeiculos();
+    fetchRegistrosVeiculos();
+  }, [dataTask]);
 
   const fetchTasks = async () => {
     try {
       const token = localStorage.getItem('token');
-      const hoje = new Date().toISOString().split('T')[0];
       
-      const response = await axios.get(`${API}/tasks?data=${hoje}`, {
+      const response = await axios.get(`${API}/tasks?data=${dataTask}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -52,6 +66,34 @@ export default function ColaboradorDashboard({ user, onLogout }) {
     } catch (error) {
       console.error(error);
       toast.error("Erro ao carregar tarefas");
+    }
+  };
+
+  const fetchVeiculos = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API}/veiculos`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Filter vehicles by user's shift
+      const veiculosDoTurno = response.data.filter(v => v.turno === user.turno);
+      setVeiculos(veiculosDoTurno);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchRegistrosVeiculos = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API}/registros-veiculos?data=${dataTask}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Filter only user's vehicle records
+      const meusRegistros = response.data.filter(r => r.motorista_id === user.id);
+      setRegistrosVeiculos(meusRegistros);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -70,7 +112,8 @@ export default function ColaboradorDashboard({ user, onLogout }) {
         {
           colaborador_id: user.id,
           tipo,
-          quantidade: parseInt(quantidade)
+          quantidade: parseInt(quantidade),
+          data: dataTask
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -102,6 +145,40 @@ export default function ColaboradorDashboard({ user, onLogout }) {
     }
   };
 
+  const handleRegistrarVeiculo = async (e) => {
+    e.preventDefault();
+    if (!veiculoForm.veiculo_id) {
+      toast.error("Selecione um veículo");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(
+        `${API}/registros-veiculos`,
+        {
+          ...veiculoForm,
+          motorista_id: user.id,
+          data: dataTask
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      toast.success("Registro de veículo salvo!");
+      setVeiculoForm({
+        veiculo_id: "",
+        km_inicial: 0,
+        km_final: 0,
+        litros_diesel: 0,
+        custo_diesel: 0
+      });
+      fetchRegistrosVeiculos();
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.detail || "Erro ao registrar veículo");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       {/* Header */}
@@ -124,15 +201,27 @@ export default function ColaboradorDashboard({ user, onLogout }) {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-8 max-w-5xl">
+      <main className="container mx-auto px-6 py-8 max-w-6xl">
+        {/* Date Selector */}
+        <div className="mb-6">
+          <Label>Data</Label>
+          <Input
+            type="date"
+            value={dataTask}
+            onChange={(e) => setDataTask(e.target.value)}
+            className="max-w-xs"
+            data-testid="input-data-selector"
+          />
+        </div>
+
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card className="bg-gradient-to-br from-teal-500 to-cyan-600 text-white">
             <CardHeader>
-              <CardTitle className="text-lg">Tasks Hoje</CardTitle>
+              <CardTitle className="text-lg">Tasks na Data</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-4xl font-bold" data-testid="colaborador-tasks-hoje">{stats.total}</div>
+              <div className="text-4xl font-bold" data-testid="colaborador-tasks-data">{stats.total}</div>
             </CardContent>
           </Card>
 
@@ -141,114 +230,250 @@ export default function ColaboradorDashboard({ user, onLogout }) {
               <CardTitle className="text-lg">Custo Gerado</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-4xl font-bold" data-testid="colaborador-custo-hoje">€{stats.custo.toFixed(2)}</div>
+              <div className="text-4xl font-bold" data-testid="colaborador-custo-data">€{stats.custo.toFixed(2)}</div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Add Task Form */}
-        <Card className="mb-8 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Plus className="w-5 h-5" />
-              Registrar Nova Tarefa
-            </CardTitle>
-            <CardDescription>Adicione as tarefas que você realizou hoje</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleAddTask} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label>Tipo de Tarefa</Label>
-                  <Select value={tipo} onValueChange={setTipo}>
-                    <SelectTrigger data-testid="select-tipo-tarefa">
-                      <SelectValue placeholder="Selecione..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="swap">Troca de Swap</SelectItem>
-                      <SelectItem value="move">Move</SelectItem>
-                      <SelectItem value="rebalancing">Rebalancing</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+        {/* Tabs */}
+        <Tabs defaultValue="tasks" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 max-w-md">
+            <TabsTrigger value="tasks">Minhas Tasks</TabsTrigger>
+            <TabsTrigger value="veiculo">Veículo</TabsTrigger>
+          </TabsList>
 
-                <div className="space-y-2">
-                  <Label>Quantidade</Label>
-                  <Input
-                    type="number"
-                    min="1"
-                    value={quantidade}
-                    onChange={(e) => setQuantidade(e.target.value)}
-                    data-testid="input-quantidade"
-                  />
-                </div>
+          <TabsContent value="tasks" className="space-y-6">
+            {/* Add Task Form */}
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Plus className="w-5 h-5" />
+                  Registrar Nova Tarefa
+                </CardTitle>
+                <CardDescription>Adicione as tarefas que você realizou</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleAddTask} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label>Tipo de Tarefa</Label>
+                      <Select value={tipo} onValueChange={setTipo}>
+                        <SelectTrigger data-testid="select-tipo-tarefa">
+                          <SelectValue placeholder="Selecione..." />
+                        </SelectTrigger>
+                        <SelectContent className="z-[9999]">
+                          <SelectItem value="swap">Troca de Swap</SelectItem>
+                          <SelectItem value="move">Move</SelectItem>
+                          <SelectItem value="rebalancing">Rebalancing</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                <div className="flex items-end">
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
-                    data-testid="add-task-button"
-                  >
-                    {loading ? "Adicionando..." : "Adicionar"}
-                  </Button>
-                </div>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+                    <div className="space-y-2">
+                      <Label>Quantidade</Label>
+                      <Input
+                        type="number"
+                        min="1"
+                        value={quantidade}
+                        onChange={(e) => setQuantidade(e.target.value)}
+                        data-testid="input-quantidade"
+                      />
+                    </div>
 
-        {/* Tasks List */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle>Tarefas de Hoje</CardTitle>
-            <CardDescription>Histórico das suas tarefas registradas</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {tasks.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
-                <p>Nenhuma tarefa registrada hoje</p>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Quantidade</TableHead>
-                    <TableHead>Custo Unitário</TableHead>
-                    <TableHead>Custo Total</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {tasks.map((task) => (
-                    <TableRow key={task.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {taskIcons[task.tipo]}
-                          <span className="font-medium">{taskLabels[task.tipo]}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>{task.quantidade}</TableCell>
-                      <TableCell>€{task.custo_unitario.toFixed(2)}</TableCell>
-                      <TableCell className="font-semibold">€{task.custo_total.toFixed(2)}</TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteTask(task.id)}
-                          data-testid={`delete-task-${task.id}`}
-                        >
-                          <Trash2 className="w-4 h-4 text-red-500" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+                    <div className="flex items-end">
+                      <Button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                        data-testid="add-task-button"
+                      >
+                        {loading ? "Adicionando..." : "Adicionar"}
+                      </Button>
+                    </div>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+
+            {/* Tasks List */}
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle>Tarefas Registradas</CardTitle>
+                <CardDescription>Histórico das suas tarefas</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {tasks.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    <p>Nenhuma tarefa registrada para esta data</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead>Quantidade</TableHead>
+                        <TableHead>Custo Unitário</TableHead>
+                        <TableHead>Custo Total</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {tasks.map((task) => (
+                        <TableRow key={task.id}>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              {taskIcons[task.tipo]}
+                              <span className="font-medium">{taskLabels[task.tipo]}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>{task.quantidade}</TableCell>
+                          <TableCell>€{task.custo_unitario.toFixed(2)}</TableCell>
+                          <TableCell className="font-semibold">€{task.custo_total.toFixed(2)}</TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteTask(task.id)}
+                              data-testid={`delete-task-${task.id}`}
+                            >
+                              <Trash2 className="w-4 h-4 text-red-500" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="veiculo" className="space-y-6">
+            {/* Vehicle Form */}
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Truck className="w-5 h-5" />
+                  Registrar Uso do Veículo
+                </CardTitle>
+                <CardDescription>Registre o KM inicial e final do seu turno</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleRegistrarVeiculo} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Veículo</Label>
+                      <Select value={veiculoForm.veiculo_id} onValueChange={(val) => setVeiculoForm({ ...veiculoForm, veiculo_id: val })}>
+                        <SelectTrigger data-testid="select-veiculo-colaborador">
+                          <SelectValue placeholder="Selecione..." />
+                        </SelectTrigger>
+                        <SelectContent className="z-[9999]">
+                          {veiculos.map(v => (
+                            <SelectItem key={v.id} value={v.id}>{v.placa} - {v.modelo}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>KM Inicial</Label>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        value={veiculoForm.km_inicial}
+                        onChange={(e) => setVeiculoForm({ ...veiculoForm, km_inicial: parseFloat(e.target.value) })}
+                        data-testid="input-km-inicial-colab"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>KM Final</Label>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        value={veiculoForm.km_final}
+                        onChange={(e) => setVeiculoForm({ ...veiculoForm, km_final: parseFloat(e.target.value) })}
+                        data-testid="input-km-final-colab"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Litros Diesel</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={veiculoForm.litros_diesel}
+                        onChange={(e) => setVeiculoForm({ ...veiculoForm, litros_diesel: parseFloat(e.target.value) })}
+                        data-testid="input-litros-diesel-colab"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Custo Diesel (€)</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={veiculoForm.custo_diesel}
+                        onChange={(e) => setVeiculoForm({ ...veiculoForm, custo_diesel: parseFloat(e.target.value) })}
+                        data-testid="input-custo-diesel-colab"
+                      />
+                    </div>
+
+                    <div className="flex items-end">
+                      <Button
+                        type="submit"
+                        className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700"
+                        data-testid="registrar-veiculo-button"
+                      >
+                        Registrar
+                      </Button>
+                    </div>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+
+            {/* Vehicle Records */}
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle>Meus Registros de Veículos</CardTitle>
+                <CardDescription>Histórico de uso de veículos</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {registrosVeiculos.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    <p>Nenhum registro de veículo para esta data</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Veículo</TableHead>
+                        <TableHead>KM Inicial</TableHead>
+                        <TableHead>KM Final</TableHead>
+                        <TableHead>KM Rodado</TableHead>
+                        <TableHead>Diesel (L)</TableHead>
+                        <TableHead>km/L</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {registrosVeiculos.map((reg) => (
+                        <TableRow key={reg.id}>
+                          <TableCell className="font-medium">{reg.veiculo_placa}</TableCell>
+                          <TableCell>{reg.km_inicial.toFixed(1)}</TableCell>
+                          <TableCell>{reg.km_final?.toFixed(1) || '-'}</TableCell>
+                          <TableCell className="font-semibold">{reg.km_rodado?.toFixed(1) || '-'}</TableCell>
+                          <TableCell>{reg.litros_diesel.toFixed(2)}</TableCell>
+                          <TableCell>{reg.km_por_litro?.toFixed(2) || '-'}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
