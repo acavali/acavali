@@ -214,12 +214,12 @@ export default function VeiculosTab() {
                 <form onSubmit={handleSubmitRegistro} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Veículo</Label>
+                      <Label>Ve­ículo</Label>
                       <Select value={registroForm.veiculo_id} onValueChange={(val) => setRegistroForm({ ...registroForm, veiculo_id: val })}>
                         <SelectTrigger data-testid="select-veiculo">
                           <SelectValue placeholder="Selecione..." />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="z-[9999]">
                           {veiculos.map(v => (
                             <SelectItem key={v.id} value={v.id}>{v.placa} - {v.modelo}</SelectItem>
                           ))}
