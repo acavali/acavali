@@ -673,6 +673,72 @@ async def relatorio_periodo(data_inicio: str, data_fim: str, current_user: dict 
         "registros_veiculos": registros_veiculos
     }
 
+# ========== MOCK APIs - External Data Simulation ==========
+
+@api_router.get("/mock/fuel-price/milan")
+async def get_milan_fuel_price():
+    """
+    Mock API - Simulates fuel price in Milan
+    Real API: GlobalPetrolPrices or Fuelo.net
+    """
+    import random
+    # Simulate real data with small variation
+    base_price = 1.57  # €/liter base price for diesel in Milan
+    variation = random.uniform(-0.03, 0.03)
+    current_price = round(base_price + variation, 2)
+    
+    return {
+        "city": "Milan",
+        "country": "Italy",
+        "fuel_type": "Diesel",
+        "price_per_liter": current_price,
+        "currency": "EUR",
+        "last_updated": datetime.now(timezone.utc).isoformat(),
+        "source": "Mock API (Simulated Data)"
+    }
+
+@api_router.get("/mock/vehicle-consumption/{model}")
+async def get_vehicle_consumption(model: str):
+    """
+    Mock API - Simulates vehicle fuel consumption
+    Real API: RapidAPI Cars Fuel Consumption or CarAPI
+    """
+    # Common vehicle models and their typical consumption
+    vehicle_database = {
+        "iveco daily": {"city": 14.5, "highway": 10.2, "combined": 12.0},
+        "fiat ducato": {"city": 13.8, "highway": 9.8, "combined": 11.5},
+        "ford transit": {"city": 14.2, "highway": 10.5, "combined": 12.2},
+        "mercedes sprinter": {"city": 13.5, "highway": 9.5, "combined": 11.2},
+        "renault master": {"city": 14.0, "highway": 10.0, "combined": 11.8},
+        "volkswagen crafter": {"city": 13.2, "highway": 9.2, "combined": 10.9},
+    }
+    
+    # Normalize model name for search
+    model_lower = model.lower().strip()
+    
+    # Try to find vehicle in database
+    consumption_data = None
+    for key in vehicle_database.keys():
+        if key in model_lower or model_lower in key:
+            consumption_data = vehicle_database[key]
+            break
+    
+    # Default values if vehicle not found
+    if not consumption_data:
+        consumption_data = {"city": 13.0, "highway": 9.5, "combined": 11.0}
+    
+    # Calculate km per liter (inverse of liters per 100km)
+    km_per_liter = round(100 / consumption_data["combined"], 2)
+    
+    return {
+        "model": model,
+        "consumption_l_per_100km": consumption_data,
+        "km_per_liter": km_per_liter,
+        "fuel_type": "Diesel",
+        "source": "Mock API (Simulated Data)",
+        "note": "Real consumption may vary based on driving conditions"
+    }
+
 # Include the router in the main app
 app.include_router(api_router)
 
