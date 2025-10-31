@@ -26,7 +26,8 @@ export default function VeiculosTab() {
   const [veiculoForm, setVeiculoForm] = useState({
     placa: "",
     modelo: "",
-    turno: ""
+    turno: "",
+    custo_litro_diesel: 1.50
   });
 
   const [registroForm, setRegistroForm] = useState({
