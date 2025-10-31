@@ -95,6 +95,7 @@ class VeiculoCreate(BaseModel):
     placa: str
     modelo: str
     turno: str  # "dia" or "noite"
+    custo_litro_diesel: Optional[float] = 1.50  # Custo por litro
 
 class Veiculo(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -102,6 +103,7 @@ class Veiculo(BaseModel):
     placa: str
     modelo: str
     turno: str
+    custo_litro_diesel: float = 1.50
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class RegistroVeiculoCreate(BaseModel):
