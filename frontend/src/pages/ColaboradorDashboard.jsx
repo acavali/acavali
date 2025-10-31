@@ -168,7 +168,7 @@ export default function ColaboradorDashboard({ user, onLogout }) {
           km_inicial: turnoAtivo.km_inicial,
           km_final: parseFloat(fecharForm.km_final),
           litros_diesel: parseFloat(fecharForm.litros_diesel),
-          custo_diesel: parseFloat(fecharForm.custo_diesel),
+          custo_diesel: 0, // Will be calculated by backend based on vehicle cost per liter
           data: turnoAtivo.data
         },
         { headers: { Authorization: `Bearer ${token}` } }
