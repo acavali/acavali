@@ -158,6 +158,9 @@ class RelatorioResponse(BaseModel):
     por_turno: dict
     total_despesas: float
     total_custo_veiculos: float
+    faturamento_bruto: float
+    faturamento_liquido: float
+    total_salarios: float
 
 # ==================== HELPER FUNCTIONS ====================
 
