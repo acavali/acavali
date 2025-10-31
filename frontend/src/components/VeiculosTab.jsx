@@ -443,13 +443,26 @@ export default function VeiculosTab() {
                   </div>
                   <div className="space-y-2">
                     <Label>Modelo</Label>
-                    <Input
-                      value={veiculoForm.modelo}
-                      onChange={(e) => setVeiculoForm({ ...veiculoForm, modelo: e.target.value })}
-                      required
-                      data-testid="input-modelo"
-                      placeholder="Ex: Fiat Ducato 2.3"
-                    />
+                    <div className="flex gap-2">
+                      <Input
+                        value={veiculoForm.modelo}
+                        onChange={(e) => setVeiculoForm({ ...veiculoForm, modelo: e.target.value })}
+                        required
+                        data-testid="input-modelo"
+                        placeholder="Ex: Fiat Ducato 2.3"
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleBuscarConsumoVeiculo}
+                        disabled={!veiculoForm.modelo}
+                        data-testid="btn-buscar-consumo"
+                        className="whitespace-nowrap"
+                      >
+                        🔍 Buscar Consumo
+                      </Button>
+                    </div>
                     <div className="flex items-center gap-2 text-xs text-blue-600">
                       <a 
                         href="https://www.automobile.it/consumi" 
@@ -460,21 +473,33 @@ export default function VeiculosTab() {
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                         </svg>
-                        Consultar consumo do veículo
+                        Consultar consumo manualmente
                       </a>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label>Custo por Litro Diesel (€)</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={veiculoForm.custo_litro_diesel}
-                      onChange={(e) => setVeiculoForm({ ...veiculoForm, custo_litro_diesel: parseFloat(e.target.value) })}
-                      required
-                      data-testid="input-custo-litro"
-                      placeholder="Ex: 1.50"
-                    />
+                    <div className="flex gap-2">
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={veiculoForm.custo_litro_diesel}
+                        onChange={(e) => setVeiculoForm({ ...veiculoForm, custo_litro_diesel: parseFloat(e.target.value) })}
+                        required
+                        data-testid="input-custo-litro"
+                        placeholder="Ex: 1.50"
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleBuscarPrecoCombutivel}
+                        data-testid="btn-buscar-preco"
+                        className="whitespace-nowrap"
+                      >
+                        🔍 Buscar Preço
+                      </Button>
+                    </div>
                     <div className="flex flex-col gap-1 text-xs text-blue-600">
                       <a 
                         href="https://www.prezzibenzina.it/prezzi/milano" 
