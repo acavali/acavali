@@ -445,6 +445,7 @@ export default function VeiculosTab() {
                   <TableRow>
                     <TableHead>Placa</TableHead>
                     <TableHead>Modelo</TableHead>
+                    <TableHead>Custo/Litro</TableHead>
                     <TableHead>Turno</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
@@ -454,6 +455,7 @@ export default function VeiculosTab() {
                     <TableRow key={veiculo.id}>
                       <TableCell className="font-medium">{veiculo.placa}</TableCell>
                       <TableCell>{veiculo.modelo}</TableCell>
+                      <TableCell>€{veiculo.custo_litro_diesel?.toFixed(2) || '1.50'}</TableCell>
                       <TableCell><span className="capitalize px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">{veiculo.turno}</span></TableCell>
                       <TableCell className="text-right">
                         <Button variant="ghost" size="sm" onClick={() => handleDeleteVeiculo(veiculo.id)} data-testid={`delete-veiculo-${veiculo.id}`}>
