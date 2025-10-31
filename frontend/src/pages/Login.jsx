@@ -40,12 +40,11 @@ export default function Login({ onLogin }) {
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
     }}>
       <Card className="w-full max-w-md shadow-2xl" data-testid="login-card">
-        <CardHeader className="space-y-3 text-center">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
-            <Bike className="w-8 h-8 text-white" />
+        <CardHeader>
+          <div>
+            <CardTitle className="text-3xl font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Sistema de Produção</CardTitle>
+            <CardDescription className="text-base">Controle de Bicicletas Elétricas - Milão, Itália</CardDescription>
           </div>
-          <CardTitle className="text-3xl font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Sistema de Produção</CardTitle>
-          <CardDescription className="text-base">Controle de Bicicletas Elétricas</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
