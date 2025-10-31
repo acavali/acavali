@@ -432,14 +432,24 @@ export default function VeiculosTab() {
                 </DialogHeader>
                 <form onSubmit={handleCreateVeiculo} className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Placa</Label>
+                    <Label>Placa (Targa Italiana)</Label>
                     <Input
                       value={veiculoForm.placa}
-                      onChange={(e) => setVeiculoForm({ ...veiculoForm, placa: e.target.value })}
+                      onChange={(e) => {
+                        // Auto-format to uppercase
+                        const value = e.target.value.toUpperCase();
+                        setVeiculoForm({ ...veiculoForm, placa: value });
+                      }}
                       required
                       data-testid="input-placa"
                       placeholder="Ex: AB123CD"
+                      maxLength={7}
+                      pattern="[A-Z]{2}[0-9]{3}[A-Z]{2}"
+                      title="Formato: 2 letras + 3 números + 2 letras (ex: AB123CD)"
                     />
+                    <p className="text-xs text-gray-500">
+                      Formato italiano: 2 letras + 3 números + 2 letras
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label>Modelo</Label>
