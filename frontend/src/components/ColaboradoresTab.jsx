@@ -24,7 +24,10 @@ export default function ColaboradoresTab() {
     turno: "",
     custo_swap: 0,
     custo_move: 0,
-    custo_rebalancing: 0
+    custo_rebalancing: 0,
+    salario: 0,
+    bonus: 0,
+    horas_extras: 0
   });
 
   useEffect(() => {
@@ -96,7 +99,10 @@ export default function ColaboradoresTab() {
       turno: user.turno,
       custo_swap: user.custo_swap,
       custo_move: user.custo_move,
-      custo_rebalancing: user.custo_rebalancing
+      custo_rebalancing: user.custo_rebalancing,
+      salario: user.salario,
+      bonus: user.bonus,
+      horas_extras: user.horas_extras
     });
     setOpenDialog(true);
   };
@@ -110,7 +116,10 @@ export default function ColaboradoresTab() {
       turno: "",
       custo_swap: 0,
       custo_move: 0,
-      custo_rebalancing: 0
+      custo_rebalancing: 0,
+      salario: 0,
+      bonus: 0,
+      horas_extras: 0
     });
   };
 
@@ -131,7 +140,7 @@ export default function ColaboradoresTab() {
               Adicionar Colaborador
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingUser ? "Editar" : "Novo"} Colaborador</DialogTitle>
             </DialogHeader>
@@ -219,6 +228,42 @@ export default function ColaboradoresTab() {
                 </div>
               </div>
 
+              <div className="space-y-3">
+                <Label className="text-base font-semibold">Informações Salariais (€)</Label>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm">Salário Mensal</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.salario}
+                      onChange={(e) => setFormData({ ...formData, salario: parseFloat(e.target.value) })}
+                      data-testid="input-salario"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm">Bônus</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.bonus}
+                      onChange={(e) => setFormData({ ...formData, bonus: parseFloat(e.target.value) })}
+                      data-testid="input-bonus"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm">Horas Extras</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.horas_extras}
+                      onChange={(e) => setFormData({ ...formData, horas_extras: parseFloat(e.target.value) })}
+                      data-testid="input-horas-extras"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <DialogFooter>
                 <Button type="submit" data-testid="save-colaborador-button">
                   {editingUser ? "Atualizar" : "Criar"} Colaborador
@@ -234,39 +279,43 @@ export default function ColaboradoresTab() {
             <p>Nenhum colaborador cadastrado</p>
           </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Turno</TableHead>
-                <TableHead>Swap</TableHead>
-                <TableHead>Move</TableHead>
-                <TableHead>Rebalancing</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {colaboradores.map((colab) => (
-                <TableRow key={colab.id}>
-                  <TableCell className="font-medium">{colab.name}</TableCell>
-                  <TableCell>{colab.email}</TableCell>
-                  <TableCell><span className="capitalize px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">{colab.turno}</span></TableCell>
-                  <TableCell>€{colab.custo_swap.toFixed(2)}</TableCell>
-                  <TableCell>€{colab.custo_move.toFixed(2)}</TableCell>
-                  <TableCell>€{colab.custo_rebalancing.toFixed(2)}</TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <Button variant="ghost" size="sm" onClick={() => handleEdit(colab)} data-testid={`edit-colaborador-${colab.id}`}>
-                      <Pencil className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => handleDelete(colab.id)} data-testid={`delete-colaborador-${colab.id}`}>
-                      <Trash2 className="w-4 h-4 text-red-500" />
-                    </Button>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Turno</TableHead>
+                  <TableHead>Swap</TableHead>
+                  <TableHead>Move</TableHead>
+                  <TableHead>Rebal.</TableHead>
+                  <TableHead>Salário</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {colaboradores.map((colab) => (
+                  <TableRow key={colab.id}>
+                    <TableCell className="font-medium">{colab.name}</TableCell>
+                    <TableCell>{colab.email}</TableCell>
+                    <TableCell><span className="capitalize px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">{colab.turno}</span></TableCell>
+                    <TableCell>€{colab.custo_swap.toFixed(2)}</TableCell>
+                    <TableCell>€{colab.custo_move.toFixed(2)}</TableCell>
+                    <TableCell>€{colab.custo_rebalancing.toFixed(2)}</TableCell>
+                    <TableCell className="font-semibold">€{colab.salario.toFixed(2)}</TableCell>
+                    <TableCell className="text-right space-x-2">
+                      <Button variant="ghost" size="sm" onClick={() => handleEdit(colab)} data-testid={`edit-colaborador-${colab.id}`}>
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => handleDelete(colab.id)} data-testid={`delete-colaborador-${colab.id}`}>
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </CardContent>
     </Card>
