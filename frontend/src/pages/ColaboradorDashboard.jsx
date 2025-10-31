@@ -243,7 +243,7 @@ export default function ColaboradorDashboard({ user, onLogout }) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl">
               <Truck className="w-6 h-6" />
-              Iniciar Turno
+              Iniciar Turno - Milão
             </CardTitle>
             <CardDescription>Registre o veículo e KM inicial para começar seu turno</CardDescription>
           </CardHeader>
