@@ -404,6 +404,18 @@ export default function VeiculosTab() {
                     />
                   </div>
                   <div className="space-y-2">
+                    <Label>Custo por Litro Diesel (€)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={veiculoForm.custo_litro_diesel}
+                      onChange={(e) => setVeiculoForm({ ...veiculoForm, custo_litro_diesel: parseFloat(e.target.value) })}
+                      required
+                      data-testid="input-custo-litro"
+                      placeholder="Ex: 1.50"
+                    />
+                  </div>
+                  <div className="space-y-2">
                     <Label>Turno</Label>
                     <Select value={veiculoForm.turno} onValueChange={(val) => setVeiculoForm({ ...veiculoForm, turno: val })}>
                       <SelectTrigger data-testid="select-turno-veiculo">
