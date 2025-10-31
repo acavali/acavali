@@ -392,6 +392,7 @@ export default function VeiculosTab() {
                       onChange={(e) => setVeiculoForm({ ...veiculoForm, placa: e.target.value })}
                       required
                       data-testid="input-placa"
+                      placeholder="Ex: AB123CD"
                     />
                   </div>
                   <div className="space-y-2">
@@ -401,7 +402,21 @@ export default function VeiculosTab() {
                       onChange={(e) => setVeiculoForm({ ...veiculoForm, modelo: e.target.value })}
                       required
                       data-testid="input-modelo"
+                      placeholder="Ex: Fiat Ducato 2.3"
                     />
+                    <div className="flex items-center gap-2 text-xs text-blue-600">
+                      <a 
+                        href="https://www.automobile.it/consumi" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="hover:underline flex items-center gap-1"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        Consultar consumo do veículo
+                      </a>
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label>Custo por Litro Diesel (€)</Label>
@@ -414,6 +429,30 @@ export default function VeiculosTab() {
                       data-testid="input-custo-litro"
                       placeholder="Ex: 1.50"
                     />
+                    <div className="flex flex-col gap-1 text-xs text-blue-600">
+                      <a 
+                        href="https://www.prezzibenzina.it/prezzi/milano" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="hover:underline flex items-center gap-1"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        Preços de combustível em Milão
+                      </a>
+                      <a 
+                        href="https://carburanti.mise.gov.it/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="hover:underline flex items-center gap-1"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        Preços oficiais - Ministero (Itália)
+                      </a>
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label>Turno</Label>
