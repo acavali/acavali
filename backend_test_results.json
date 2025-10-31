@@ -1,0 +1,123 @@
+{
+  "timestamp": "2025-10-31T06:29:44.571517",
+  "total_tests": 23,
+  "passed_tests": 22,
+  "success_rate": 95.65217391304348,
+  "results": [
+    {
+      "test": "API Connectivity",
+      "success": true,
+      "details": "API is accessible"
+    },
+    {
+      "test": "Admin Login",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Current User",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Unauthorized Access Test",
+      "success": false,
+      "details": "Status: 403, Expected: 401, Response: {'detail': 'Not authenticated'}"
+    },
+    {
+      "test": "Create Colaborador",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Colaboradores",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Update Colaborador",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Colaborador Login",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Vehicle",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Vehicles",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Vehicle Record",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Vehicle Records",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Swap Task",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Move Task",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Rebalancing Task",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Tasks",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Tasks by Date",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Expense",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Expenses",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Expenses by Date",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Generate Daily Report",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Daily Report Structure",
+      "success": true,
+      "details": "Missing fields: []"
+    },
+    {
+      "test": "Generate Period Report",
+      "success": true,
+      "details": "Status: 200"
+    }
+  ]
+}
