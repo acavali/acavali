@@ -408,7 +408,7 @@ export default function VeiculosTab() {
                       <SelectTrigger data-testid="select-turno-veiculo">
                         <SelectValue placeholder="Selecione..." />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="z-[9999]">
                         <SelectItem value="dia">Dia</SelectItem>
                         <SelectItem value="noite">Noite</SelectItem>
                       </SelectContent>
