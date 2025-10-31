@@ -549,10 +549,39 @@ async def relatorio_diario(data: str, current_user: dict = Depends(get_current_u
     despesas = await db.despesas.find({"data": data}, {"_id": 0}).to_list(10000)
     registros_veiculos = await db.registros_veiculos.find({"data": data}, {"_id": 0}).to_list(10000)
     
+    # Get all colaboradores to calculate salaries
+    colaboradores = await db.users.find({"role": "colaborador"}, {"_id": 0}).to_list(1000)
+    
     total_tasks = sum(t['quantidade'] for t in tasks)
     total_custo = sum(t['custo_total'] for t in tasks)
     total_despesas = sum(d['valor'] for d in despesas)
     total_custo_veiculos = sum(r['custo_diesel'] for r in registros_veiculos)
+    
+    # Calculate salaries for active colaboradores on this day
+    colaboradores_ativos_ids = set(t['colaborador_id'] for t in tasks)
+    total_salarios = sum(
+        (c.get('salario', 0) / 30) + c.get('bonus', 0) + c.get('horas_extras', 0)
+        for c in colaboradores 
+        if c['id'] in colaboradores_ativos_ids
+    )
+    
+    # Calculate revenue (faturamento)
+    # Assuming each task generates revenue based on a markup over cost
+    # For example: Swap = €2.50, Move = €2.00, Rebalancing = €3.00
+    revenue_map = {
+        "swap": 2.50,
+        "move": 2.00,
+        "rebalancing": 3.00
+    }
+    
+    faturamento_bruto = sum(
+        t['quantidade'] * revenue_map.get(t['tipo'], 2.0)
+        for t in tasks
+    )
+    
+    # Faturamento líquido = bruto - custos totais
+    total_custos = total_custo + total_despesas + total_custo_veiculos + total_salarios
+    faturamento_liquido = faturamento_bruto - total_custos
     
     # Por tipo
     por_tipo = {}
@@ -598,7 +627,10 @@ async def relatorio_diario(data: str, current_user: dict = Depends(get_current_u
         por_colaborador=list(por_colab.values()),
         por_turno=por_turno,
         total_despesas=total_despesas,
-        total_custo_veiculos=total_custo_veiculos
+        total_custo_veiculos=total_custo_veiculos,
+        faturamento_bruto=faturamento_bruto,
+        faturamento_liquido=faturamento_liquido,
+        total_salarios=total_salarios
     )
 
 @api_router.get("/relatorios/periodo")
