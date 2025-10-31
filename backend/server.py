@@ -44,6 +44,9 @@ class UserCreate(BaseModel):
     custo_swap: Optional[float] = 0.0
     custo_move: Optional[float] = 0.0
     custo_rebalancing: Optional[float] = 0.0
+    salario: Optional[float] = 0.0
+    bonus: Optional[float] = 0.0
+    horas_extras: Optional[float] = 0.0
 
 class User(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -55,6 +58,9 @@ class User(BaseModel):
     custo_swap: float = 0.0
     custo_move: float = 0.0
     custo_rebalancing: float = 0.0
+    salario: float = 0.0
+    bonus: float = 0.0
+    horas_extras: float = 0.0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserLogin(BaseModel):
@@ -85,12 +91,73 @@ class Task(BaseModel):
     data: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class VeiculoCreate(BaseModel):
+    placa: str
+    modelo: str
+    turno: str  # "dia" or "noite"
+
+class Veiculo(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    placa: str
+    modelo: str
+    turno: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class RegistroVeiculoCreate(BaseModel):
+    veiculo_id: str
+    motorista_id: str
+    km_inicial: float
+    km_final: Optional[float] = None
+    litros_diesel: Optional[float] = 0.0
+    custo_diesel: Optional[float] = 0.0
+    data: Optional[str] = None
+
+class RegistroVeiculo(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    veiculo_id: str
+    veiculo_placa: str
+    veiculo_modelo: str
+    motorista_id: str
+    motorista_nome: str
+    turno: str
+    km_inicial: float
+    km_final: Optional[float] = None
+    km_rodado: Optional[float] = 0.0
+    litros_diesel: float = 0.0
+    custo_diesel: float = 0.0
+    km_por_litro: Optional[float] = 0.0
+    data: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class DespesaCreate(BaseModel):
+    descricao: str
+    valor: float
+    categoria: str  # "material", "aluguel", "manutencao", "outro"
+    pago_por: Optional[str] = None
+    observacoes: Optional[str] = None
+    data: Optional[str] = None
+
+class Despesa(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    descricao: str
+    valor: float
+    categoria: str
+    pago_por: Optional[str] = None
+    observacoes: Optional[str] = None
+    data: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 class RelatorioResponse(BaseModel):
     total_tasks: int
     total_custo: float
     por_tipo: dict
     por_colaborador: List[dict]
     por_turno: dict
+    total_despesas: float
+    total_custo_veiculos: float
 
 # ==================== HELPER FUNCTIONS ====================
 
@@ -289,14 +356,200 @@ async def delete_task(task_id: str, current_user: dict = Depends(get_current_use
     await db.tasks.delete_one({"id": task_id})
     return {"message": "Tarefa deletada com sucesso"}
 
+# ========== VEICULOS ==========
+
+@api_router.post("/veiculos", response_model=Veiculo)
+async def create_veiculo(veiculo_data: VeiculoCreate, current_user: dict = Depends(get_current_user)):
+    if current_user['role'] != 'admin':
+        raise HTTPException(status_code=403, detail="Apenas admin pode criar veículos")
+    
+    veiculo_obj = Veiculo(**veiculo_data.model_dump())
+    doc = veiculo_obj.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.veiculos.insert_one(doc)
+    return veiculo_obj
+
+@api_router.get("/veiculos", response_model=List[Veiculo])
+async def get_veiculos(current_user: dict = Depends(get_current_user)):
+    veiculos = await db.veiculos.find({}, {"_id": 0}).to_list(1000)
+    for veiculo in veiculos:
+        if isinstance(veiculo['created_at'], str):
+            veiculo['created_at'] = datetime.fromisoformat(veiculo['created_at'])
+    return veiculos
+
+@api_router.delete("/veiculos/{veiculo_id}")
+async def delete_veiculo(veiculo_id: str, current_user: dict = Depends(get_current_user)):
+    if current_user['role'] != 'admin':
+        raise HTTPException(status_code=403, detail="Apenas admin pode deletar veículos")
+    
+    result = await db.veiculos.delete_one({"id": veiculo_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Veículo não encontrado")
+    
+    return {"message": "Veículo deletado com sucesso"}
+
+# ========== REGISTROS DE VEICULOS ==========
+
+@api_router.post("/registros-veiculos", response_model=RegistroVeiculo)
+async def create_registro_veiculo(registro_data: RegistroVeiculoCreate, current_user: dict = Depends(get_current_user)):
+    # Get veiculo info
+    veiculo = await db.veiculos.find_one({"id": registro_data.veiculo_id}, {"_id": 0})
+    if not veiculo:
+        raise HTTPException(status_code=404, detail="Veículo não encontrado")
+    
+    # Get motorista info
+    motorista = await db.users.find_one({"id": registro_data.motorista_id}, {"_id": 0})
+    if not motorista:
+        raise HTTPException(status_code=404, detail="Motorista não encontrado")
+    
+    # Calculate km_rodado and km_por_litro
+    km_rodado = 0
+    km_por_litro = 0
+    if registro_data.km_final:
+        km_rodado = registro_data.km_final - registro_data.km_inicial
+        if registro_data.litros_diesel and registro_data.litros_diesel > 0:
+            km_por_litro = km_rodado / registro_data.litros_diesel
+    
+    data = registro_data.data if registro_data.data else datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    
+    registro_obj = RegistroVeiculo(
+        veiculo_id=registro_data.veiculo_id,
+        veiculo_placa=veiculo['placa'],
+        veiculo_modelo=veiculo['modelo'],
+        motorista_id=registro_data.motorista_id,
+        motorista_nome=motorista['name'],
+        turno=motorista['turno'],
+        km_inicial=registro_data.km_inicial,
+        km_final=registro_data.km_final,
+        km_rodado=km_rodado,
+        litros_diesel=registro_data.litros_diesel or 0,
+        custo_diesel=registro_data.custo_diesel or 0,
+        km_por_litro=km_por_litro,
+        data=data
+    )
+    
+    doc = registro_obj.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.registros_veiculos.insert_one(doc)
+    return registro_obj
+
+@api_router.get("/registros-veiculos", response_model=List[RegistroVeiculo])
+async def get_registros_veiculos(data: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    query = {}
+    if data:
+        query['data'] = data
+    
+    registros = await db.registros_veiculos.find(query, {"_id": 0}).to_list(10000)
+    for registro in registros:
+        if isinstance(registro['created_at'], str):
+            registro['created_at'] = datetime.fromisoformat(registro['created_at'])
+    return registros
+
+@api_router.put("/registros-veiculos/{registro_id}", response_model=RegistroVeiculo)
+async def update_registro_veiculo(registro_id: str, registro_data: RegistroVeiculoCreate, current_user: dict = Depends(get_current_user)):
+    # Get veiculo info
+    veiculo = await db.veiculos.find_one({"id": registro_data.veiculo_id}, {"_id": 0})
+    if not veiculo:
+        raise HTTPException(status_code=404, detail="Veículo não encontrado")
+    
+    # Get motorista info
+    motorista = await db.users.find_one({"id": registro_data.motorista_id}, {"_id": 0})
+    if not motorista:
+        raise HTTPException(status_code=404, detail="Motorista não encontrado")
+    
+    # Calculate km_rodado and km_por_litro
+    km_rodado = 0
+    km_por_litro = 0
+    if registro_data.km_final:
+        km_rodado = registro_data.km_final - registro_data.km_inicial
+        if registro_data.litros_diesel and registro_data.litros_diesel > 0:
+            km_por_litro = km_rodado / registro_data.litros_diesel
+    
+    update_data = {
+        "veiculo_placa": veiculo['placa'],
+        "veiculo_modelo": veiculo['modelo'],
+        "motorista_nome": motorista['name'],
+        "turno": motorista['turno'],
+        "km_inicial": registro_data.km_inicial,
+        "km_final": registro_data.km_final,
+        "km_rodado": km_rodado,
+        "litros_diesel": registro_data.litros_diesel or 0,
+        "custo_diesel": registro_data.custo_diesel or 0,
+        "km_por_litro": km_por_litro
+    }
+    
+    result = await db.registros_veiculos.update_one({"id": registro_id}, {"$set": update_data})
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Registro não encontrado")
+    
+    registro = await db.registros_veiculos.find_one({"id": registro_id}, {"_id": 0})
+    if isinstance(registro['created_at'], str):
+        registro['created_at'] = datetime.fromisoformat(registro['created_at'])
+    return RegistroVeiculo(**registro)
+
+@api_router.delete("/registros-veiculos/{registro_id}")
+async def delete_registro_veiculo(registro_id: str, current_user: dict = Depends(get_current_user)):
+    result = await db.registros_veiculos.delete_one({"id": registro_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Registro não encontrado")
+    
+    return {"message": "Registro deletado com sucesso"}
+
+# ========== DESPESAS ==========
+
+@api_router.post("/despesas", response_model=Despesa)
+async def create_despesa(despesa_data: DespesaCreate, current_user: dict = Depends(get_current_user)):
+    data = despesa_data.data if despesa_data.data else datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    
+    despesa_obj = Despesa(
+        descricao=despesa_data.descricao,
+        valor=despesa_data.valor,
+        categoria=despesa_data.categoria,
+        pago_por=despesa_data.pago_por,
+        observacoes=despesa_data.observacoes,
+        data=data
+    )
+    
+    doc = despesa_obj.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.despesas.insert_one(doc)
+    return despesa_obj
+
+@api_router.get("/despesas", response_model=List[Despesa])
+async def get_despesas(data: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    query = {}
+    if data:
+        query['data'] = data
+    
+    despesas = await db.despesas.find(query, {"_id": 0}).to_list(10000)
+    for despesa in despesas:
+        if isinstance(despesa['created_at'], str):
+            despesa['created_at'] = datetime.fromisoformat(despesa['created_at'])
+    return despesas
+
+@api_router.delete("/despesas/{despesa_id}")
+async def delete_despesa(despesa_id: str, current_user: dict = Depends(get_current_user)):
+    result = await db.despesas.delete_one({"id": despesa_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Despesa não encontrada")
+    
+    return {"message": "Despesa deletada com sucesso"}
+
 # ========== REPORTS ==========
 
 @api_router.get("/relatorios/diario", response_model=RelatorioResponse)
 async def relatorio_diario(data: str, current_user: dict = Depends(get_current_user)):
     tasks = await db.tasks.find({"data": data}, {"_id": 0}).to_list(10000)
+    despesas = await db.despesas.find({"data": data}, {"_id": 0}).to_list(10000)
+    registros_veiculos = await db.registros_veiculos.find({"data": data}, {"_id": 0}).to_list(10000)
     
     total_tasks = sum(t['quantidade'] for t in tasks)
     total_custo = sum(t['custo_total'] for t in tasks)
+    total_despesas = sum(d['valor'] for d in despesas)
+    total_custo_veiculos = sum(r['custo_diesel'] for r in registros_veiculos)
     
     # Por tipo
     por_tipo = {}
@@ -340,12 +593,22 @@ async def relatorio_diario(data: str, current_user: dict = Depends(get_current_u
         total_custo=total_custo,
         por_tipo=por_tipo,
         por_colaborador=list(por_colab.values()),
-        por_turno=por_turno
+        por_turno=por_turno,
+        total_despesas=total_despesas,
+        total_custo_veiculos=total_custo_veiculos
     )
 
 @api_router.get("/relatorios/periodo")
 async def relatorio_periodo(data_inicio: str, data_fim: str, current_user: dict = Depends(get_current_user)):
     tasks = await db.tasks.find({
+        "data": {"$gte": data_inicio, "$lte": data_fim}
+    }, {"_id": 0}).to_list(10000)
+    
+    despesas = await db.despesas.find({
+        "data": {"$gte": data_inicio, "$lte": data_fim}
+    }, {"_id": 0}).to_list(10000)
+    
+    registros_veiculos = await db.registros_veiculos.find({
         "data": {"$gte": data_inicio, "$lte": data_fim}
     }, {"_id": 0}).to_list(10000)
     
@@ -358,7 +621,12 @@ async def relatorio_periodo(data_inicio: str, data_fim: str, current_user: dict 
         por_data[data]['quantidade'] += task['quantidade']
         por_data[data]['custo'] += task['custo_total']
     
-    return {"por_data": por_data, "tasks": tasks}
+    return {
+        "por_data": por_data,
+        "tasks": tasks,
+        "despesas": despesas,
+        "registros_veiculos": registros_veiculos
+    }
 
 # Include the router in the main app
 app.include_router(api_router)
