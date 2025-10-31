@@ -311,7 +311,7 @@ export default function ColaboradorDashboard({ user, onLogout }) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Truck className="w-5 h-5" />
-              Fechar Turno
+              Fechar Turno - Milão
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleFecharTurno} className="space-y-4">
