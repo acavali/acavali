@@ -257,14 +257,14 @@ export default function ColaboradorDashboard({ user, onLogout }) {
               </Alert>
 
               <div className="space-y-2">
-                <Label>Veículo (Placa/Targa)</Label>
+                <Label>Veículo (Targa)</Label>
                 <Select 
                   value={iniciarForm.veiculo_id} 
                   onValueChange={(val) => setIniciarForm({ ...iniciarForm, veiculo_id: val })}
                   required
                 >
                   <SelectTrigger data-testid="select-veiculo-iniciar">
-                    <SelectValue placeholder="Selecione o veículo..." />
+                    <SelectValue placeholder="Selecione o veículo (targa)..." />
                   </SelectTrigger>
                   <SelectContent className="z-[9999]">
                     {veiculos.map(v => (
