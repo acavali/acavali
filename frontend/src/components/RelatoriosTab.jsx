@@ -86,28 +86,68 @@ export default function RelatoriosTab() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-amber-500 to-orange-600 text-white">
+            <Card className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Custo Total</CardTitle>
+                <CardTitle className="text-sm font-medium">Faturamento Bruto</CardTitle>
                 <TrendingUp className="h-5 w-5 opacity-80" />
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold" data-testid="relatorio-total-custo">€{relatorio.total_custo.toFixed(2)}</div>
-                <p className="text-xs opacity-80 mt-1">Custo gerado</p>
+                <div className="text-3xl font-bold" data-testid="relatorio-faturamento-bruto">€{relatorio.faturamento_bruto.toFixed(2)}</div>
+                <p className="text-xs opacity-80 mt-1">Receita total</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-violet-500 to-purple-600 text-white">
+            <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Colaboradores</CardTitle>
-                <Users className="h-5 w-5 opacity-80" />
+                <CardTitle className="text-sm font-medium">Faturamento Líquido</CardTitle>
+                <TrendingUp className="h-5 w-5 opacity-80" />
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold" data-testid="relatorio-total-colaboradores">{relatorio.por_colaborador.length}</div>
-                <p className="text-xs opacity-80 mt-1">Ativos no dia</p>
+                <div className="text-3xl font-bold" data-testid="relatorio-faturamento-liquido">€{relatorio.faturamento_liquido.toFixed(2)}</div>
+                <p className="text-xs opacity-80 mt-1">Após descontos</p>
               </CardContent>
             </Card>
           </div>
+
+          {/* Cost Breakdown */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Detalhamento de Custos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span className="text-gray-600">Custo de Produção:</span>
+                    <span className="font-bold text-lg">€{relatorio.total_custo.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span className="text-gray-600">Despesas Operacionais:</span>
+                    <span className="font-bold text-lg">€{relatorio.total_despesas.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span className="text-gray-600">Custo Veículos:</span>
+                    <span className="font-bold text-lg">€{relatorio.total_custo_veiculos.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span className="text-gray-600">Salários (diário):</span>
+                    <span className="font-bold text-lg">€{relatorio.total_salarios.toFixed(2)}</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center">
+                  <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-lg w-full">
+                    <p className="text-sm text-gray-600 mb-2">Margem de Lucro</p>
+                    <p className="text-4xl font-bold text-purple-600">
+                      {relatorio.faturamento_bruto > 0 
+                        ? ((relatorio.faturamento_liquido / relatorio.faturamento_bruto) * 100).toFixed(1)
+                        : 0
+                      }%
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Comparison Dia vs Noite */}
           <Card>
