@@ -48,8 +48,7 @@ export default function ColaboradorDashboard({ user, onLogout }) {
   // Fechar turno form
   const [fecharForm, setFecharForm] = useState({
     km_final: 0,
-    litros_diesel: 0,
-    custo_diesel: 0
+    litros_diesel: 0
   });
 
   useEffect(() => {
