@@ -232,7 +232,7 @@ export default function VeiculosTab() {
                         <SelectTrigger data-testid="select-motorista">
                           <SelectValue placeholder="Selecione..." />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="z-[9999]">
                           {colaboradores.map(c => (
                             <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                           ))}
