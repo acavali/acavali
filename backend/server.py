@@ -95,7 +95,10 @@ class VeiculoCreate(BaseModel):
     placa: str
     modelo: str
     turno: str  # "dia" or "noite"
-    custo_litro_diesel: Optional[float] = 1.50  # Custo por litro
+    tipo_combustivel: str  # "diesel", "gasolina", "eletrico", "hibrido"
+    consumo_km_por_litro: Optional[float] = 0.0  # km/L
+    custo_litro_diesel: Optional[float] = 1.57  # Custo por litro
+    custo_por_bateria: Optional[float] = 0.0  # Para veículos elétricos
 
 class Veiculo(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -103,7 +106,10 @@ class Veiculo(BaseModel):
     placa: str
     modelo: str
     turno: str
-    custo_litro_diesel: float = 1.50
+    tipo_combustivel: str = "diesel"
+    consumo_km_por_litro: float = 0.0
+    custo_litro_diesel: float = 1.57
+    custo_por_bateria: float = 0.0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class RegistroVeiculoCreate(BaseModel):
