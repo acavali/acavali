@@ -496,8 +496,42 @@ export default function VeiculosTab() {
                       </a>
                     </div>
                   </div>
+                  
                   <div className="space-y-2">
-                    <Label>Custo por Litro Diesel (€)</Label>
+                    <Label>Tipo de Combustível</Label>
+                    <Select 
+                      value={veiculoForm.tipo_combustivel} 
+                      onValueChange={(val) => setVeiculoForm({ ...veiculoForm, tipo_combustivel: val })}
+                    >
+                      <SelectTrigger data-testid="select-tipo-combustivel">
+                        <SelectValue placeholder="Selecione..." />
+                      </SelectTrigger>
+                      <SelectContent className="z-[9999]">
+                        <SelectItem value="diesel">Diesel</SelectItem>
+                        <SelectItem value="gasolina">Gasolina</SelectItem>
+                        <SelectItem value="eletrico">Elétrico</SelectItem>
+                        <SelectItem value="hibrido">Híbrido</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Consumo (km/L)</Label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      value={veiculoForm.consumo_km_por_litro}
+                      onChange={(e) => setVeiculoForm({ ...veiculoForm, consumo_km_por_litro: parseFloat(e.target.value) })}
+                      data-testid="input-consumo-km-litro"
+                      placeholder="Ex: 11.5"
+                    />
+                    <p className="text-xs text-gray-500">
+                      Consumo médio do veículo (preenchido automaticamente ao buscar)
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Custo por Litro Diesel/Gasolina (€)</Label>
                     <div className="flex gap-2">
                       <Input
                         type="number"
