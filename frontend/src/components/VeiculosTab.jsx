@@ -27,7 +27,10 @@ export default function VeiculosTab() {
     placa: "",
     modelo: "",
     turno: "",
-    custo_litro_diesel: 1.50
+    tipo_combustivel: "diesel",
+    consumo_km_por_litro: 0,
+    custo_litro_diesel: 1.57,
+    custo_por_bateria: 0
   });
 
   const [registroForm, setRegistroForm] = useState({
