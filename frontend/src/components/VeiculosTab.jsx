@@ -138,6 +138,12 @@ export default function VeiculosTab() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
+      // Auto-fill consumption field
+      setVeiculoForm({
+        ...veiculoForm,
+        consumo_km_por_litro: response.data.km_per_liter
+      });
+      
       toast.success(
         `Consumo: ${response.data.km_per_liter} km/L`, 
         {
