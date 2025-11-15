@@ -144,7 +144,7 @@ export default function AdminDashboard({ user, onLogout }) {
           </TabsContent>
 
           <TabsContent value="relatorios">
-            <RelatoriosTab />
+            <RelatoriosAvancadosTab />
           </TabsContent>
         </Tabs>
       </main>
