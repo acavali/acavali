@@ -586,6 +586,94 @@ async def delete_despesa(despesa_id: str, current_user: dict = Depends(get_curre
     
     return {"message": "Despesa deletada com sucesso"}
 
+# ========== MANUTENCOES ==========
+
+@api_router.post("/manutencoes", response_model=Manutencao)
+async def create_manutencao(manutencao_data: ManutencaoCreate, current_user: dict = Depends(get_current_user)):
+    # Get veiculo info
+    veiculo = await db.veiculos.find_one({"id": manutencao_data.veiculo_id}, {"_id": 0})
+    if not veiculo:
+        raise HTTPException(status_code=404, detail="Veículo não encontrado")
+    
+    data = manutencao_data.data_realizada if manutencao_data.data_realizada else datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    
+    # Calculate km_faltante if proxima_troca is set
+    km_faltante = None
+    if manutencao_data.km_proxima_troca:
+        km_faltante = manutencao_data.km_proxima_troca - manutencao_data.km_atual
+    
+    manutencao_obj = Manutencao(
+        veiculo_id=manutencao_data.veiculo_id,
+        veiculo_placa=veiculo['placa'],
+        veiculo_modelo=veiculo['modelo'],
+        tipo=manutencao_data.tipo,
+        descricao=manutencao_data.descricao,
+        km_atual=manutencao_data.km_atual,
+        km_proxima_troca=manutencao_data.km_proxima_troca,
+        km_faltante=km_faltante,
+        data_realizada=data,
+        custo=manutencao_data.custo,
+        pecas_trocadas=manutencao_data.pecas_trocadas,
+        observacoes=manutencao_data.observacoes,
+        status="concluida"
+    )
+    
+    doc = manutencao_obj.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.manutencoes.insert_one(doc)
+    return manutencao_obj
+
+@api_router.get("/manutencoes", response_model=List[Manutencao])
+async def get_manutencoes(veiculo_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    query = {}
+    if veiculo_id:
+        query['veiculo_id'] = veiculo_id
+    
+    manutencoes = await db.manutencoes.find(query, {"_id": 0}).sort("data_realizada", -1).to_list(10000)
+    for manutencao in manutencoes:
+        if isinstance(manutencao['created_at'], str):
+            manutencao['created_at'] = datetime.fromisoformat(manutencao['created_at'])
+    return manutencoes
+
+@api_router.get("/manutencoes/proximas/{veiculo_id}")
+async def get_proximas_manutencoes(veiculo_id: str, km_atual: float, current_user: dict = Depends(get_current_user)):
+    """
+    Get upcoming maintenance based on current km
+    """
+    # Get last maintenance records
+    manutencoes = await db.manutencoes.find(
+        {"veiculo_id": veiculo_id, "km_proxima_troca": {"$ne": None}},
+        {"_id": 0}
+    ).sort("data_realizada", -1).to_list(100)
+    
+    proximas = []
+    for manutencao in manutencoes:
+        if manutencao['km_proxima_troca']:
+            km_faltante = manutencao['km_proxima_troca'] - km_atual
+            status = "atrasada" if km_faltante < 0 else "proxima" if km_faltante < 1000 else "ok"
+            
+            proximas.append({
+                "tipo": manutencao['tipo'],
+                "descricao": manutencao['descricao'],
+                "km_proxima_troca": manutencao['km_proxima_troca'],
+                "km_faltante": km_faltante,
+                "status": status
+            })
+    
+    return proximas
+
+@api_router.delete("/manutencoes/{manutencao_id}")
+async def delete_manutencao(manutencao_id: str, current_user: dict = Depends(get_current_user)):
+    if current_user['role'] != 'admin':
+        raise HTTPException(status_code=403, detail="Apenas admin pode deletar manutenções")
+    
+    result = await db.manutencoes.delete_one({"id": manutencao_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Manutenção não encontrada")
+    
+    return {"message": "Manutenção deletada com sucesso"}
+
 # ========== REPORTS ==========
 
 @api_router.get("/relatorios/diario", response_model=RelatorioResponse)
