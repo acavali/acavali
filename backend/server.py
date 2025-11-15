@@ -698,17 +698,17 @@ async def relatorio_diario(data: str, current_user: dict = Depends(get_current_u
         if c['id'] in colaboradores_ativos_ids
     )
     
-    # Calculate revenue (faturamento)
-    # Assuming each task generates revenue based on a markup over cost
-    # For example: Swap = €2.50, Move = €2.00, Rebalancing = €3.00
+    # Calculate revenue (faturamento) - Valores de contrato Dott
     revenue_map = {
-        "swap": 2.50,
-        "move": 2.00,
-        "rebalancing": 3.00
+        "deploy": 2.80,
+        "rebalancing": 2.80,  # deploy e rebalancing são o mesmo
+        "swap": 3.00,
+        "move": 3.20,
+        "mecanica": 21.00
     }
     
     faturamento_bruto = sum(
-        t['quantidade'] * revenue_map.get(t['tipo'], 2.0)
+        t['quantidade'] * revenue_map.get(t['tipo'], 3.00)
         for t in tasks
     )
     
@@ -721,9 +721,10 @@ async def relatorio_diario(data: str, current_user: dict = Depends(get_current_u
     for task in tasks:
         tipo = task['tipo']
         if tipo not in por_tipo:
-            por_tipo[tipo] = {"quantidade": 0, "custo": 0}
+            por_tipo[tipo] = {"quantidade": 0, "custo": 0, "faturamento": 0}
         por_tipo[tipo]['quantidade'] += task['quantidade']
         por_tipo[tipo]['custo'] += task['custo_total']
+        por_tipo[tipo]['faturamento'] += task['quantidade'] * revenue_map.get(tipo, 3.00)
     
     # Por colaborador
     por_colab = {}
@@ -735,10 +736,12 @@ async def relatorio_diario(data: str, current_user: dict = Depends(get_current_u
                 "turno": task['turno'],
                 "quantidade": 0,
                 "custo": 0,
+                "faturamento": 0,
                 "por_tipo": {}
             }
         por_colab[colab_id]['quantidade'] += task['quantidade']
         por_colab[colab_id]['custo'] += task['custo_total']
+        por_colab[colab_id]['faturamento'] += task['quantidade'] * revenue_map.get(task['tipo'], 3.00)
         
         tipo = task['tipo']
         if tipo not in por_colab[colab_id]['por_tipo']:
@@ -767,10 +770,26 @@ async def relatorio_diario(data: str, current_user: dict = Depends(get_current_u
     )
 
 @api_router.get("/relatorios/periodo")
-async def relatorio_periodo(data_inicio: str, data_fim: str, current_user: dict = Depends(get_current_user)):
-    tasks = await db.tasks.find({
-        "data": {"$gte": data_inicio, "$lte": data_fim}
-    }, {"_id": 0}).to_list(10000)
+async def relatorio_periodo(
+    data_inicio: str, 
+    data_fim: str, 
+    colaborador_id: Optional[str] = None,
+    tipo_task: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Advanced report with filters
+    """
+    # Build query
+    query = {"data": {"$gte": data_inicio, "$lte": data_fim}}
+    
+    if colaborador_id:
+        query['colaborador_id'] = colaborador_id
+    
+    if tipo_task:
+        query['tipo'] = tipo_task
+    
+    tasks = await db.tasks.find(query, {"_id": 0}).to_list(10000)
     
     despesas = await db.despesas.find({
         "data": {"$gte": data_inicio, "$lte": data_fim}
@@ -780,17 +799,71 @@ async def relatorio_periodo(data_inicio: str, data_fim: str, current_user: dict 
         "data": {"$gte": data_inicio, "$lte": data_fim}
     }, {"_id": 0}).to_list(10000)
     
+    # Calculate totals
+    revenue_map = {
+        "deploy": 2.80,
+        "rebalancing": 2.80,
+        "swap": 3.00,
+        "move": 3.20,
+        "mecanica": 21.00
+    }
+    
+    total_tasks = sum(t['quantidade'] for t in tasks)
+    total_custo = sum(t['custo_total'] for t in tasks)
+    total_faturamento = sum(t['quantidade'] * revenue_map.get(t['tipo'], 3.00) for t in tasks)
+    total_despesas = sum(d['valor'] for d in despesas)
+    total_custo_veiculos = sum(r['custo_diesel'] for r in registros_veiculos)
+    
     # Group by date
     por_data = {}
     for task in tasks:
         data = task['data']
         if data not in por_data:
-            por_data[data] = {"quantidade": 0, "custo": 0}
+            por_data[data] = {"quantidade": 0, "custo": 0, "faturamento": 0}
         por_data[data]['quantidade'] += task['quantidade']
         por_data[data]['custo'] += task['custo_total']
+        por_data[data]['faturamento'] += task['quantidade'] * revenue_map.get(task['tipo'], 3.00)
+    
+    # Group by tipo
+    por_tipo = {}
+    for task in tasks:
+        tipo = task['tipo']
+        if tipo not in por_tipo:
+            por_tipo[tipo] = {"quantidade": 0, "custo": 0, "faturamento": 0}
+        por_tipo[tipo]['quantidade'] += task['quantidade']
+        por_tipo[tipo]['custo'] += task['custo_total']
+        por_tipo[tipo]['faturamento'] += task['quantidade'] * revenue_map.get(tipo, 3.00)
+    
+    # Group by colaborador
+    por_colaborador = {}
+    for task in tasks:
+        colab_id = task['colaborador_id']
+        if colab_id not in por_colaborador:
+            por_colaborador[colab_id] = {
+                "id": colab_id,
+                "nome": task['colaborador_nome'],
+                "turno": task['turno'],
+                "quantidade": 0,
+                "custo": 0,
+                "faturamento": 0
+            }
+        por_colaborador[colab_id]['quantidade'] += task['quantidade']
+        por_colaborador[colab_id]['custo'] += task['custo_total']
+        por_colaborador[colab_id]['faturamento'] += task['quantidade'] * revenue_map.get(task['tipo'], 3.00)
     
     return {
+        "periodo": {"inicio": data_inicio, "fim": data_fim},
+        "totais": {
+            "tasks": total_tasks,
+            "custo": total_custo,
+            "faturamento": total_faturamento,
+            "lucro": total_faturamento - (total_custo + total_despesas + total_custo_veiculos),
+            "despesas": total_despesas,
+            "custo_veiculos": total_custo_veiculos
+        },
         "por_data": por_data,
+        "por_tipo": por_tipo,
+        "por_colaborador": list(por_colaborador.values()),
         "tasks": tasks,
         "despesas": despesas,
         "registros_veiculos": registros_veiculos
