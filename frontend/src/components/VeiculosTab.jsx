@@ -242,8 +242,9 @@ export default function VeiculosTab() {
 
   return (
     <Tabs defaultValue="registros">
-      <TabsList className="grid w-full grid-cols-2 max-w-md">
+      <TabsList className="grid w-full grid-cols-3 max-w-2xl">
         <TabsTrigger value="registros">Registros Diários</TabsTrigger>
+        <TabsTrigger value="manutencao">Manutenção</TabsTrigger>
         <TabsTrigger value="veiculos">Gerenciar Veículos</TabsTrigger>
       </TabsList>
 
