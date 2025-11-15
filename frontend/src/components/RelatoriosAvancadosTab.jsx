@@ -102,12 +102,12 @@ export default function RelatoriosAvancadosTab() {
 
             <div className="space-y-2">
               <Label>Colaborador (Opcional)</Label>
-              <Select value={colaboradorFiltro} onValueChange={setColaboradorFiltro}>
+              <Select value={colaboradorFiltro || undefined} onValueChange={(val) => setColaboradorFiltro(val || "")}>
                 <SelectTrigger data-testid="select-colaborador-filtro">
                   <SelectValue placeholder="Todos" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos</SelectItem>
+                  <SelectItem value="todos">Todos</SelectItem>
                   {colaboradores.map(c => (
                     <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                   ))}
@@ -117,12 +117,12 @@ export default function RelatoriosAvancadosTab() {
 
             <div className="space-y-2">
               <Label>Tipo de Task (Opcional)</Label>
-              <Select value={tipoTaskFiltro} onValueChange={setTipoTaskFiltro}>
+              <Select value={tipoTaskFiltro || undefined} onValueChange={(val) => setTipoTaskFiltro(val || "")}>
                 <SelectTrigger data-testid="select-tipo-filtro">
                   <SelectValue placeholder="Todos" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos</SelectItem>
+                  <SelectItem value="todos">Todos</SelectItem>
                   <SelectItem value="swap">Swap</SelectItem>
                   <SelectItem value="move">Move</SelectItem>
                   <SelectItem value="deploy">Deploy</SelectItem>
