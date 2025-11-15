@@ -13,13 +13,17 @@ const API = `${BACKEND_URL}/api`;
 const taskIcons = {
   swap: <Battery className="w-4 h-4" />,
   move: <Move className="w-4 h-4" />,
-  rebalancing: <RefreshCw className="w-4 h-4" />
+  rebalancing: <RefreshCw className="w-4 h-4" />,
+  deploy: <RefreshCw className="w-4 h-4" />,
+  mecanica: <Wrench className="w-4 h-4" />
 };
 
 const taskLabels = {
   swap: "Swap",
   move: "Move",
-  rebalancing: "Rebalancing"
+  rebalancing: "Rebalancing",
+  deploy: "Deploy",
+  mecanica: "Mecânica"
 };
 
 export default function ProducaoTab() {
