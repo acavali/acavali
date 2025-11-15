@@ -445,9 +445,11 @@ export default function ColaboradorDashboard({ user, onLogout }) {
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
                     <SelectContent className="z-[9999]">
-                      <SelectItem value="swap">Troca de Swap</SelectItem>
+                      <SelectItem value="swap">Swap</SelectItem>
                       <SelectItem value="move">Move</SelectItem>
                       <SelectItem value="rebalancing">Rebalancing</SelectItem>
+                      <SelectItem value="deploy">Deploy</SelectItem>
+                      <SelectItem value="mecanica">Mecânica</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
