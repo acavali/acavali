@@ -200,9 +200,6 @@ export default function VeiculosTab() {
       veiculo_id: registro.veiculo_id,
       motorista_id: registro.motorista_id,
       km_inicial: registro.km_inicial,
-      km_final: registro.km_final || 0,
-      litros_diesel: registro.litros_diesel || 0,
-      custo_diesel: registro.custo_diesel || 0,
       data: registro.data
     });
     setOpenRegistroDialog(true);
