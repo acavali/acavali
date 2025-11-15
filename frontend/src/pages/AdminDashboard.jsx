@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { LogOut, Users, BarChart3, Calendar, Truck, Receipt } from "lucide-react";
 import ColaboradoresTab from "@/components/ColaboradoresTab";
 import RelatoriosTab from "@/components/RelatoriosTab";
+import RelatoriosAvancadosTab from "@/components/RelatoriosAvancadosTab";
 import ProducaoTab from "@/components/ProducaoTab";
 import VeiculosTab from "@/components/VeiculosTab";
 import DespesasTab from "@/components/DespesasTab";
