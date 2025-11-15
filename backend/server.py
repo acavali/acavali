@@ -158,6 +158,35 @@ class Despesa(BaseModel):
     data: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class ManutencaoCreate(BaseModel):
+    veiculo_id: str
+    tipo: str  # "oleo", "pneus", "filtros", "revisao", "outro"
+    descricao: str
+    km_atual: float
+    km_proxima_troca: Optional[float] = None
+    data_realizada: Optional[str] = None
+    custo: float
+    pecas_trocadas: Optional[str] = None
+    observacoes: Optional[str] = None
+
+class Manutencao(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    veiculo_id: str
+    veiculo_placa: str
+    veiculo_modelo: str
+    tipo: str
+    descricao: str
+    km_atual: float
+    km_proxima_troca: Optional[float] = None
+    km_faltante: Optional[float] = None
+    data_realizada: str
+    custo: float
+    pecas_trocadas: Optional[str] = None
+    observacoes: Optional[str] = None
+    status: str = "concluida"  # "concluida", "proxima", "atrasada"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 class RelatorioResponse(BaseModel):
     total_tasks: int
     total_custo: float
