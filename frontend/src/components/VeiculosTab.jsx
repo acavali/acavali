@@ -423,6 +423,10 @@ export default function VeiculosTab() {
         </Card>
       </TabsContent>
 
+      <TabsContent value="manutencao">
+        <ManutencaoTab />
+      </TabsContent>
+
       <TabsContent value="veiculos">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
