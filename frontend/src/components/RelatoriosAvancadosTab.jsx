@@ -52,8 +52,8 @@ export default function RelatoriosAvancadosTab() {
       const token = localStorage.getItem('token');
       
       let url = `${API}/relatorios/periodo?data_inicio=${dataInicio}&data_fim=${dataFim}`;
-      if (colaboradorFiltro) url += `&colaborador_id=${colaboradorFiltro}`;
-      if (tipoTaskFiltro) url += `&tipo_task=${tipoTaskFiltro}`;
+      if (colaboradorFiltro && colaboradorFiltro !== "todos") url += `&colaborador_id=${colaboradorFiltro}`;
+      if (tipoTaskFiltro && tipoTaskFiltro !== "todos") url += `&tipo_task=${tipoTaskFiltro}`;
       
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` }
