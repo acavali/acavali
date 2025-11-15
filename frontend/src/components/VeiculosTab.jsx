@@ -311,39 +311,7 @@ export default function VeiculosTab() {
                         required
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label>KM Final</Label>
-                      <Input
-                        type="number"
-                        step="0.1"
-                        value={registroForm.km_final}
-                        onChange={(e) => setRegistroForm({ ...registroForm, km_final: parseFloat(e.target.value) })}
-                        data-testid="input-km-final"
-                      />
-                    </div>
-                  </div>
 
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label>Litros Diesel</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={registroForm.litros_diesel}
-                        onChange={(e) => setRegistroForm({ ...registroForm, litros_diesel: parseFloat(e.target.value) })}
-                        data-testid="input-litros-diesel"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Custo Diesel (€)</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={registroForm.custo_diesel}
-                        onChange={(e) => setRegistroForm({ ...registroForm, custo_diesel: parseFloat(e.target.value) })}
-                        data-testid="input-custo-diesel"
-                      />
-                    </div>
                     <div className="space-y-2">
                       <Label>Data</Label>
                       <Input
