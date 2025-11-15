@@ -18,13 +18,17 @@ const API = `${BACKEND_URL}/api`;
 const taskIcons = {
   swap: <Battery className="w-5 h-5" />,
   move: <Move className="w-5 h-5" />,
-  rebalancing: <RefreshCw className="w-5 h-5" />
+  rebalancing: <RefreshCw className="w-5 h-5" />,
+  deploy: <RefreshCw className="w-5 h-5" />,
+  mecanica: <Wrench className="w-5 h-5" />
 };
 
 const taskLabels = {
-  swap: "Troca de Swap",
+  swap: "Swap",
   move: "Move",
-  rebalancing: "Rebalancing"
+  rebalancing: "Rebalancing",
+  deploy: "Deploy",
+  mecanica: "Mecânica"
 };
 
 export default function ColaboradorDashboard({ user, onLogout }) {
