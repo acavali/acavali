@@ -230,9 +230,6 @@ export default function VeiculosTab() {
       veiculo_id: "",
       motorista_id: "",
       km_inicial: 0,
-      km_final: 0,
-      litros_diesel: 0,
-      custo_diesel: 0,
       data: new Date().toISOString().split('T')[0]
     });
   };
