@@ -191,6 +191,23 @@ class Manutencao(BaseModel):
     status: str = "concluida"  # "concluida", "proxima", "atrasada"
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class RegistroPresencaCreate(BaseModel):
+    usuario_id: str
+    tipo: str  # "login" or "logout"
+    localizacao: Optional[dict] = None  # {latitude, longitude, endereco}
+    data: Optional[str] = None
+
+class RegistroPresenca(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    usuario_id: str
+    usuario_nome: str
+    tipo: str  # "login" or "logout"
+    localizacao: Optional[dict] = None
+    data: str
+    hora: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 class RelatorioResponse(BaseModel):
     total_tasks: int
     total_custo: float
