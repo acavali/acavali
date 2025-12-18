@@ -177,12 +177,12 @@ export default function ProducaoTab() {
               </div>
 
               {/* Charts */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <BarChart3 className="w-5 h-5" />
-                      Quantidade de Tasks por Tipo
+                      Quantidade de Tasks
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -203,7 +203,7 @@ export default function ProducaoTab() {
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <TrendingUp className="w-5 h-5" />
-                      Faturamento Bruto por Tipo
+                      Faturamento vs Despesa
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -215,7 +215,31 @@ export default function ProducaoTab() {
                         <Tooltip formatter={(value) => `€${value.toFixed(2)}`} />
                         <Legend />
                         <Bar dataKey="faturamento" fill="#10b981" name="Faturamento (€)" />
-                        <Bar dataKey="custo" fill="#f59e0b" name="Custo (€)" />
+                        <Bar dataKey="custo" fill="#f59e0b" name="Despesa (€)" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5" />
+                      Lucro por Tipo
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={chartData.map(item => ({
+                        ...item,
+                        lucro: item.faturamento - item.custo
+                      }))}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="tipo" />
+                        <YAxis />
+                        <Tooltip formatter={(value) => `€${value.toFixed(2)}`} />
+                        <Legend />
+                        <Bar dataKey="lucro" fill="#059669" name="Lucro Bruto (€)" />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
