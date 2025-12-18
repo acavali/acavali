@@ -21,12 +21,14 @@ export default function ColaboradoresTab() {
     name: "",
     email: "",
     password: "",
+    tipo_funcionario: "motorista",  // "motorista" ou "mecanico"
     turno: "",
     custo_swap: 0,
     custo_move: 0,
     custo_rebalancing: 0,
     salario: 0,
     bonus: 0,
+    bonus_por_producao: 0,  // Para mecânicos
     horas_extras: 0
   });
 
