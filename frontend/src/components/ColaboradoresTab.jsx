@@ -337,6 +337,7 @@ export default function ColaboradoresTab() {
                 <TableRow>
                   <TableHead>Nome</TableHead>
                   <TableHead>Email</TableHead>
+                  <TableHead>Tipo</TableHead>
                   <TableHead>Turno</TableHead>
                   <TableHead>Swap</TableHead>
                   <TableHead>Move</TableHead>
@@ -350,10 +351,15 @@ export default function ColaboradoresTab() {
                   <TableRow key={colab.id}>
                     <TableCell className="font-medium">{colab.name}</TableCell>
                     <TableCell>{colab.email}</TableCell>
+                    <TableCell>
+                      <span className={`px-2 py-1 rounded-full text-xs ${colab.tipo_funcionario === 'mecanico' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}`}>
+                        {colab.tipo_funcionario === 'mecanico' ? '🔧 Mecânico' : '👨‍✈️ Motorista'}
+                      </span>
+                    </TableCell>
                     <TableCell><span className="capitalize px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">{colab.turno}</span></TableCell>
-                    <TableCell>€{colab.custo_swap.toFixed(2)}</TableCell>
-                    <TableCell>€{colab.custo_move.toFixed(2)}</TableCell>
-                    <TableCell>€{colab.custo_rebalancing.toFixed(2)}</TableCell>
+                    <TableCell>{colab.tipo_funcionario === 'motorista' ? `€${colab.custo_swap.toFixed(2)}` : '-'}</TableCell>
+                    <TableCell>{colab.tipo_funcionario === 'motorista' ? `€${colab.custo_move.toFixed(2)}` : '-'}</TableCell>
+                    <TableCell>{colab.tipo_funcionario === 'motorista' ? `€${colab.custo_rebalancing.toFixed(2)}` : '-'}</TableCell>
                     <TableCell className="font-semibold">€{colab.salario.toFixed(2)}</TableCell>
                     <TableCell className="text-right space-x-2">
                       <Button variant="ghost" size="sm" onClick={() => handleEdit(colab)} data-testid={`edit-colaborador-${colab.id}`}>
