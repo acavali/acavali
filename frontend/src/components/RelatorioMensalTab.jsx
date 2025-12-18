@@ -121,8 +121,8 @@ export default function RelatorioMensalTab() {
           </div>
         </CardHeader>
         <CardContent>
-          {/* Filtros */}
-          <div className="flex gap-4 items-end mb-6">
+          {/* Filtros Básicos */}
+          <div className="flex gap-4 items-end mb-4 flex-wrap">
             <div className="space-y-2">
               <Label>Mês</Label>
               <Input
@@ -149,6 +149,16 @@ export default function RelatorioMensalTab() {
               <Calendar className="w-4 h-4 mr-2" />
               {loading ? "Gerando..." : "Gerar Relatório"}
             </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowFiltros(!showFiltros)}
+              className="flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+              {showFiltros ? "Ocultar" : "Filtros Avançados"}
+            </Button>
             {relatorio && (
               <Button variant="outline" onClick={exportarPDF}>
                 <Download className="w-4 h-4 mr-2" />
@@ -156,6 +166,160 @@ export default function RelatorioMensalTab() {
               </Button>
             )}
           </div>
+
+          {/* Filtros Avançados */}
+          {showFiltros && (
+            <Card className="mb-6 border-2 border-blue-200 bg-blue-50">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  🔍 Filtros Avançados
+                </CardTitle>
+                <CardDescription>Refine sua busca com filtros personalizados</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Período Personalizado */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>📅 Data Inicial (Período Customizado)</Label>
+                    <Input
+                      type="date"
+                      value={filtros.dataInicioCustom}
+                      onChange={(e) => setFiltros({...filtros, dataInicioCustom: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>📅 Data Final (Período Customizado)</Label>
+                    <Input
+                      type="date"
+                      value={filtros.dataFimCustom}
+                      onChange={(e) => setFiltros({...filtros, dataFimCustom: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                {/* Filtros de Colaborador */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>👥 Tipo de Funcionário</Label>
+                    <select
+                      className="w-full p-2 border rounded-md"
+                      value={filtros.tipoFuncionario}
+                      onChange={(e) => setFiltros({...filtros, tipoFuncionario: e.target.value})}
+                    >
+                      <option value="todos">Todos</option>
+                      <option value="motorista">👨‍✈️ Motoristas</option>
+                      <option value="mecanico">🔧 Mecânicos</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>👤 Colaborador Específico</Label>
+                    <select
+                      className="w-full p-2 border rounded-md"
+                      value={filtros.colaboradorId}
+                      onChange={(e) => setFiltros({...filtros, colaboradorId: e.target.value})}
+                    >
+                      <option value="">Todos os colaboradores</option>
+                      {colaboradores.map((colab) => (
+                        <option key={colab.id} value={colab.id}>
+                          {colab.name} ({colab.tipo_funcionario === 'mecanico' ? '🔧' : '👨‍✈️'})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Filtros de Tarefa e Despesa */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>📋 Tipo de Tarefa</Label>
+                    <select
+                      className="w-full p-2 border rounded-md"
+                      value={filtros.tipoTarefa}
+                      onChange={(e) => setFiltros({...filtros, tipoTarefa: e.target.value})}
+                    >
+                      <option value="todas">Todas</option>
+                      <option value="deploy">Deploy</option>
+                      <option value="swap">Swap</option>
+                      <option value="move">Move</option>
+                      <option value="mecanica">Mecânica</option>
+                      <option value="rebalancing">Rebalancing</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>💰 Tipo de Despesa</Label>
+                    <select
+                      className="w-full p-2 border rounded-md"
+                      value={filtros.tipoDespesa}
+                      onChange={(e) => setFiltros({...filtros, tipoDespesa: e.target.value})}
+                    >
+                      <option value="todas">Todas</option>
+                      <option value="tasks">Despesas de Tarefas</option>
+                      <option value="gerais">Despesas Gerais</option>
+                      <option value="manutencao">Manutenção</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Valores e Produção */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label>💶 Valor Mínimo (€)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="Ex: 10.00"
+                      value={filtros.valorMin}
+                      onChange={(e) => setFiltros({...filtros, valorMin: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>💶 Valor Máximo (€)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="Ex: 100.00"
+                      value={filtros.valorMax}
+                      onChange={(e) => setFiltros({...filtros, valorMax: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>📊 Produção Mínima</Label>
+                    <Input
+                      type="number"
+                      placeholder="Ex: 10"
+                      value={filtros.producaoMin}
+                      onChange={(e) => setFiltros({...filtros, producaoMin: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                {/* Localização */}
+                <div className="space-y-2">
+                  <Label>📍 Filtrar por Localização</Label>
+                  <Input
+                    type="text"
+                    placeholder="Ex: Via Roma, Milano, Centro"
+                    value={filtros.localizacao}
+                    onChange={(e) => setFiltros({...filtros, localizacao: e.target.value})}
+                  />
+                  <p className="text-xs text-gray-500">
+                    Digite parte do endereço registrado nos logins
+                  </p>
+                </div>
+
+                {/* Botões de Ação */}
+                <div className="flex gap-2 pt-4 border-t">
+                  <Button onClick={gerarRelatorio} disabled={loading} className="flex-1">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Aplicar Filtros
+                  </Button>
+                  <Button variant="outline" onClick={limparFiltros} className="flex-1">
+                    Limpar Filtros
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Relatório */}
           {relatorio && (
