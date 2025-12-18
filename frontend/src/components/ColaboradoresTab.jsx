@@ -181,6 +181,24 @@ export default function ColaboradoresTab() {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label>Tipo de Funcionário</Label>
+                  <Select 
+                    value={formData.tipo_funcionario} 
+                    onValueChange={(val) => setFormData({ ...formData, tipo_funcionario: val })}
+                  >
+                    <SelectTrigger data-testid="select-tipo-funcionario">
+                      <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
+                    <SelectContent className="z-[9999]">
+                      <SelectItem value="motorista">👨‍✈️ Motorista</SelectItem>
+                      <SelectItem value="mecanico">🔧 Mecânico</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
                   <Label>Turno</Label>
                   <Select value={formData.turno} onValueChange={(val) => setFormData({ ...formData, turno: val })}>
                     <SelectTrigger data-testid="select-turno">
@@ -194,41 +212,44 @@ export default function ColaboradoresTab() {
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <Label className="text-base font-semibold">Custos por Tarefa (€)</Label>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-sm">Swap</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={formData.custo_swap}
-                      onChange={(e) => setFormData({ ...formData, custo_swap: parseFloat(e.target.value) })}
-                      data-testid="input-custo-swap"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm">Move</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={formData.custo_move}
-                      onChange={(e) => setFormData({ ...formData, custo_move: parseFloat(e.target.value) })}
-                      data-testid="input-custo-move"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm">Rebalancing</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={formData.custo_rebalancing}
-                      onChange={(e) => setFormData({ ...formData, custo_rebalancing: parseFloat(e.target.value) })}
-                      data-testid="input-custo-rebalancing"
-                    />
+              {/* Custos por Tarefa - Somente para Motoristas */}
+              {formData.tipo_funcionario === "motorista" && (
+                <div className="space-y-3">
+                  <Label className="text-base font-semibold">💰 Custos por Tarefa (€) - Motorista</Label>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm">Swap</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={formData.custo_swap}
+                        onChange={(e) => setFormData({ ...formData, custo_swap: parseFloat(e.target.value) })}
+                        data-testid="input-custo-swap"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Move</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={formData.custo_move}
+                        onChange={(e) => setFormData({ ...formData, custo_move: parseFloat(e.target.value) })}
+                        data-testid="input-custo-move"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Rebalancing</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={formData.custo_rebalancing}
+                        onChange={(e) => setFormData({ ...formData, custo_rebalancing: parseFloat(e.target.value) })}
+                        data-testid="input-custo-rebalancing"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="space-y-3">
                 <Label className="text-base font-semibold">Informações Salariais (€)</Label>
