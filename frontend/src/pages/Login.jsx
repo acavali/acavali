@@ -15,6 +15,42 @@ export default function Login({ onLogin }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const getLocalizacao = () => {
+    return new Promise((resolve) => {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords;
+            try {
+              // Tentar obter endereço usando a API de Geocoding do OpenStreetMap
+              const geoResponse = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+              );
+              const geoData = await geoResponse.json();
+              resolve({
+                latitude,
+                longitude,
+                endereco: geoData.display_name || `${latitude}, ${longitude}`
+              });
+            } catch (error) {
+              resolve({
+                latitude,
+                longitude,
+                endereco: `${latitude}, ${longitude}`
+              });
+            }
+          },
+          (error) => {
+            console.log("Geolocalização não disponível:", error);
+            resolve(null);
+          }
+        );
+      } else {
+        resolve(null);
+      }
+    });
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -25,7 +61,30 @@ export default function Login({ onLogin }) {
         password,
       });
 
-      onLogin(response.data.user, response.data.access_token);
+      const token = response.data.access_token;
+      const user = response.data.user;
+
+      // Registrar presença com localização
+      const localizacao = await getLocalizacao();
+      
+      try {
+        await axios.post(
+          `${API}/presenca/registrar`,
+          {
+            usuario_id: user.id,
+            tipo: "login",
+            localizacao: localizacao
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+      } catch (locError) {
+        console.error("Erro ao registrar localização:", locError);
+        // Continua mesmo se falhar o registro de localização
+      }
+
+      onLogin(user, token);
       toast.success("Login realizado com sucesso!");
     } catch (error) {
       console.error(error);
