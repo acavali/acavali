@@ -102,6 +102,22 @@ export default function RelatorioMensalTab() {
     });
   };
 
+  // Contar filtros ativos
+  const contarFiltrosAtivos = () => {
+    let count = 0;
+    if (filtros.dataInicioCustom) count++;
+    if (filtros.dataFimCustom) count++;
+    if (filtros.colaboradorId) count++;
+    if (filtros.tipoFuncionario !== "todos") count++;
+    if (filtros.tipoTarefa !== "todas") count++;
+    if (filtros.tipoDespesa !== "todas") count++;
+    if (filtros.valorMin) count++;
+    if (filtros.valorMax) count++;
+    if (filtros.localizacao) count++;
+    if (filtros.producaoMin) count++;
+    return count;
+  };
+
   const exportarPDF = () => {
     toast.info("Funcionalidade de exportação será implementada");
   };
