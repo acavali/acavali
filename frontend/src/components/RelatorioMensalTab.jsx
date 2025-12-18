@@ -17,6 +17,24 @@ export default function RelatorioMensalTab() {
   const [ano, setAno] = useState(new Date().getFullYear());
   const [relatorio, setRelatorio] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showFiltros, setShowFiltros] = useState(false);
+  
+  // Estados dos filtros avançados
+  const [filtros, setFiltros] = useState({
+    dataInicioCustom: "",
+    dataFimCustom: "",
+    colaboradorId: "",
+    tipoFuncionario: "todos",
+    tipoTarefa: "todas",
+    tipoDespesa: "todas",
+    valorMin: "",
+    valorMax: "",
+    localizacao: "",
+    producaoMin: ""
+  });
+  
+  // Lista de colaboradores para o select
+  const [colaboradores, setColaboradores] = useState([]);
 
   const gerarRelatorio = async () => {
     setLoading(true);
