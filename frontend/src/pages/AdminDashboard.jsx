@@ -145,7 +145,20 @@ export default function AdminDashboard({ user, onLogout }) {
           </TabsContent>
 
           <TabsContent value="relatorios">
-            <RelatoriosAvancadosTab />
+            <Tabs defaultValue="avancado" className="space-y-4">
+              <TabsList className="grid w-full max-w-md grid-cols-2">
+                <TabsTrigger value="avancado">Relatórios Avançados</TabsTrigger>
+                <TabsTrigger value="mensal">Fechamento Mensal</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="avancado">
+                <RelatoriosAvancadosTab />
+              </TabsContent>
+
+              <TabsContent value="mensal">
+                <RelatorioMensalTab />
+              </TabsContent>
+            </Tabs>
           </TabsContent>
         </Tabs>
       </main>
