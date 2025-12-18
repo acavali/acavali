@@ -289,6 +289,29 @@ export default function ColaboradoresTab() {
                 </div>
               </div>
 
+              {/* Campo específico para Mecânicos */}
+              {formData.tipo_funcionario === "mecanico" && (
+                <div className="space-y-3 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <Label className="text-base font-semibold flex items-center gap-2">
+                    <span>🔧</span> Configurações de Mecânico
+                  </Label>
+                  <div className="space-y-2">
+                    <Label className="text-sm">Bonificação por Produção (€ por manutenção)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.bonus_por_producao}
+                      onChange={(e) => setFormData({ ...formData, bonus_por_producao: parseFloat(e.target.value) })}
+                      placeholder="Ex: 5.00"
+                      data-testid="input-bonus-producao"
+                    />
+                    <p className="text-xs text-gray-500">
+                      O mecânico receberá um valor adicional por cada manutenção realizada
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <DialogFooter>
                 <Button type="submit" data-testid="save-colaborador-button">
                   {editingUser ? "Atualizar" : "Criar"} Colaborador
