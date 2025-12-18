@@ -447,17 +447,28 @@ async def create_registro_veiculo(registro_data: RegistroVeiculoCreate, current_
     if not motorista:
         raise HTTPException(status_code=404, detail="Motorista não encontrado")
     
-    # Calculate km_rodado, custo_diesel and km_por_litro
+    # Calculate km_rodado, litros_diesel (automatic), custo_diesel and km_por_litro
     km_rodado = 0
     km_por_litro = 0
     custo_diesel = 0
+    litros_diesel = registro_data.litros_diesel or 0
     
     if registro_data.km_final:
         km_rodado = registro_data.km_final - registro_data.km_inicial
-        if registro_data.litros_diesel and registro_data.litros_diesel > 0:
-            km_por_litro = km_rodado / registro_data.litros_diesel
-            # Calculate cost based on vehicle's cost per liter
-            custo_diesel = registro_data.litros_diesel * veiculo.get('custo_litro_diesel', 1.50)
+        
+        # Automatic calculation of fuel liters based on vehicle's average consumption
+        consumo_medio = veiculo.get('consumo_km_por_litro', 0)
+        if consumo_medio > 0 and km_rodado > 0:
+            # Calculate: Litros = Distância / Média de Consumo (km/L)
+            litros_diesel = km_rodado / consumo_medio
+            km_por_litro = consumo_medio  # Use the registered average
+        elif litros_diesel > 0:
+            # Fallback: if liters were manually provided
+            km_por_litro = km_rodado / litros_diesel
+        
+        # Calculate diesel cost
+        if litros_diesel > 0:
+            custo_diesel = litros_diesel * veiculo.get('custo_litro_diesel', 1.50)
     
     data = registro_data.data if registro_data.data else datetime.now(timezone.utc).strftime('%Y-%m-%d')
     
@@ -507,17 +518,28 @@ async def update_registro_veiculo(registro_id: str, registro_data: RegistroVeicu
     if not motorista:
         raise HTTPException(status_code=404, detail="Motorista não encontrado")
     
-    # Calculate km_rodado, custo_diesel and km_por_litro
+    # Calculate km_rodado, litros_diesel (automatic), custo_diesel and km_por_litro
     km_rodado = 0
     km_por_litro = 0
     custo_diesel = 0
+    litros_diesel = registro_data.litros_diesel or 0
     
     if registro_data.km_final:
         km_rodado = registro_data.km_final - registro_data.km_inicial
-        if registro_data.litros_diesel and registro_data.litros_diesel > 0:
-            km_por_litro = km_rodado / registro_data.litros_diesel
-            # Calculate cost based on vehicle's cost per liter
-            custo_diesel = registro_data.litros_diesel * veiculo.get('custo_litro_diesel', 1.50)
+        
+        # Automatic calculation of fuel liters based on vehicle's average consumption
+        consumo_medio = veiculo.get('consumo_km_por_litro', 0)
+        if consumo_medio > 0 and km_rodado > 0:
+            # Calculate: Litros = Distância / Média de Consumo (km/L)
+            litros_diesel = km_rodado / consumo_medio
+            km_por_litro = consumo_medio  # Use the registered average
+        elif litros_diesel > 0:
+            # Fallback: if liters were manually provided
+            km_por_litro = km_rodado / litros_diesel
+        
+        # Calculate diesel cost
+        if litros_diesel > 0:
+            custo_diesel = litros_diesel * veiculo.get('custo_litro_diesel', 1.50)
     
     update_data = {
         "veiculo_placa": veiculo['placa'],
