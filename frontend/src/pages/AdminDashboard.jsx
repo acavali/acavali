@@ -80,7 +80,7 @@ export default function AdminDashboard({ user, onLogout }) {
             <p className="text-sm text-gray-500">Bem-vindo, {user.name}</p>
           </div>
           <Button
-            onClick={onLogout}
+            onClick={handleLogout}
             variant="outline"
             className="flex items-center gap-2"
             data-testid="logout-button"
