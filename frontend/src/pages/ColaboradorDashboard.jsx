@@ -360,17 +360,41 @@ export default function ColaboradorDashboard({ user, onLogout }) {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label>Litros Diesel</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={fecharForm.litros_diesel}
-                onChange={(e) => setFecharForm({ ...fecharForm, litros_diesel: parseFloat(e.target.value) })}
-                data-testid="input-litros-diesel-turno"
-                placeholder="Quantidade de litros abastecidos"
-              />
-            </div>
+            {/* Cálculo Automático de Combustível */}
+            {(() => {
+              const calculo = calcularLitrosAutomatico();
+              if (calculo) {
+                return (
+                  <Alert className="bg-blue-50 border-blue-200">
+                    <AlertDescription className="space-y-2">
+                      <p className="font-semibold text-blue-900">📊 Cálculo Automático:</p>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <p className="text-gray-600">Distância percorrida:</p>
+                          <p className="font-semibold">{calculo.kmRodado.toFixed(1)} km</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-600">Consumo médio:</p>
+                          <p className="font-semibold">{calculo.consumoMedio.toFixed(1)} km/L</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-600">Litros consumidos:</p>
+                          <p className="font-bold text-green-600">{calculo.litros.toFixed(2)} L</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-600">Custo estimado:</p>
+                          <p className="font-bold text-orange-600">€{calculo.custoEstimado.toFixed(2)}</p>
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        ✓ O sistema calculará automaticamente o combustível com base na média cadastrada do veículo.
+                      </p>
+                    </AlertDescription>
+                  </Alert>
+                );
+              }
+              return null;
+            })()}
 
             <DialogFooter className="gap-2">
               <Button type="button" variant="outline" onClick={() => setShowFecharTurno(false)}>
