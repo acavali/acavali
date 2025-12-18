@@ -48,6 +48,28 @@ export default function AdminDashboard({ user, onLogout }) {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      // Registrar logout
+      await axios.post(
+        `${API}/presenca/registrar`,
+        {
+          usuario_id: user.id,
+          tipo: "logout",
+          localizacao: null
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+    } catch (error) {
+      console.error("Erro ao registrar logout:", error);
+    } finally {
+      onLogout();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Header */}
