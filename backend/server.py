@@ -1182,6 +1182,12 @@ async def get_relatorio_mensal(
             custo_tasks = sum(t['custo_total'] for t in tasks_colab)
             salario_total = salario_base + custo_tasks + colab.get('bonus', 0)
         
+        # Filtro de produção mínima
+        if producao_min is not None:
+            total_producao = total_tasks + total_manutencoes
+            if total_producao < producao_min:
+                continue  # Pula colaboradores abaixo da produção mínima
+        
         total_pagamentos += salario_total
         
         pagamentos_colaboradores.append({
