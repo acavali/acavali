@@ -978,6 +978,199 @@ async def get_vehicle_consumption(model: str):
         "note": "Real consumption may vary based on driving conditions"
     }
 
+# ========== REGISTRO DE PRESENÇA (LOGIN/LOGOUT) ==========
+
+@api_router.post("/presenca/registrar", response_model=RegistroPresenca)
+async def registrar_presenca(registro_data: RegistroPresencaCreate, current_user: dict = Depends(get_current_user)):
+    """
+    Registra login ou logout do colaborador com localização (GPS)
+    """
+    user = await db.users.find_one({"id": registro_data.usuario_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
+    now = datetime.now(timezone.utc)
+    data = registro_data.data if registro_data.data else now.strftime('%Y-%m-%d')
+    hora = now.strftime('%H:%M:%S')
+    
+    registro_obj = RegistroPresenca(
+        usuario_id=registro_data.usuario_id,
+        usuario_nome=user['name'],
+        tipo=registro_data.tipo,
+        localizacao=registro_data.localizacao,
+        data=data,
+        hora=hora
+    )
+    
+    doc = registro_obj.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.registros_presenca.insert_one(doc)
+    return registro_obj
+
+@api_router.get("/presenca/registros")
+async def get_registros_presenca(
+    data_inicio: Optional[str] = None,
+    data_fim: Optional[str] = None,
+    usuario_id: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Busca registros de presença com filtros
+    """
+    query = {}
+    
+    if usuario_id:
+        query['usuario_id'] = usuario_id
+    
+    if data_inicio and data_fim:
+        query['data'] = {'$gte': data_inicio, '$lte': data_fim}
+    elif data_inicio:
+        query['data'] = {'$gte': data_inicio}
+    elif data_fim:
+        query['data'] = {'$lte': data_fim}
+    
+    registros = await db.registros_presenca.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    
+    for registro in registros:
+        if isinstance(registro.get('created_at'), str):
+            registro['created_at'] = datetime.fromisoformat(registro['created_at'])
+    
+    return registros
+
+# ========== RELATÓRIO MENSAL ==========
+
+@api_router.get("/relatorios/mensal")
+async def get_relatorio_mensal(mes: str, ano: str, current_user: dict = Depends(get_current_user)):
+    """
+    Gera relatório de fechamento mensal completo
+    mes: formato "01" a "12"
+    ano: formato "2025"
+    """
+    # Datas do mês
+    data_inicio = f"{ano}-{mes}-01"
+    ultimo_dia = 31 if mes in ['01','03','05','07','08','10','12'] else 30 if mes in ['04','06','09','11'] else 28
+    data_fim = f"{ano}-{mes}-{ultimo_dia}"
+    
+    # 1. Buscar todas as tasks do mês
+    tasks = await db.tasks.find({
+        "data": {"$gte": data_inicio, "$lte": data_fim}
+    }, {"_id": 0}).to_list(10000)
+    
+    # 2. Buscar despesas do mês
+    despesas = await db.despesas.find({
+        "data": {"$gte": data_inicio, "$lte": data_fim}
+    }, {"_id": 0}).to_list(10000)
+    
+    # 3. Buscar manutenções do mês
+    manutencoes = await db.manutencoes.find({
+        "data_realizada": {"$gte": data_inicio, "$lte": data_fim}
+    }, {"_id": 0}).to_list(10000)
+    
+    # 4. Buscar registros de presença (diárias)
+    registros_presenca = await db.registros_presenca.find({
+        "data": {"$gte": data_inicio, "$lte": data_fim},
+        "tipo": "login"
+    }, {"_id": 0}).to_list(10000)
+    
+    # 5. Buscar todos colaboradores
+    colaboradores = await db.users.find({"role": "colaborador"}, {"_id": 0}).to_list(100)
+    
+    # Valores de contrato
+    valoresContrato = {
+        "deploy": 2.80,
+        "rebalancing": 2.80,
+        "swap": 3.00,
+        "move": 3.20,
+        "mecanica": 21.00
+    }
+    
+    # Calcular faturamento total
+    faturamento_total = sum(task['quantidade'] * valoresContrato.get(task['tipo'], 3.00) for task in tasks)
+    
+    # Calcular despesas de tasks
+    despesas_tasks = sum(task['custo_total'] for task in tasks)
+    
+    # Calcular despesas gerais
+    despesas_gerais = sum(d['valor'] for d in despesas)
+    
+    # Calcular despesas de manutenção
+    despesas_manutencao = sum(m['custo'] for m in manutencoes)
+    
+    # Calcular pagamentos por colaborador
+    pagamentos_colaboradores = []
+    total_pagamentos = 0
+    
+    for colab in colaboradores:
+        # Contar diárias (dias únicos com login)
+        diarias = len(set(r['data'] for r in registros_presenca if r['usuario_id'] == colab['id']))
+        
+        # Tasks do colaborador
+        tasks_colab = [t for t in tasks if t['colaborador_id'] == colab['id']]
+        total_tasks = sum(t['quantidade'] for t in tasks_colab)
+        
+        # Manutenções do colaborador (se for mecânico)
+        manutencoes_colab = [m for m in manutencoes if m.get('realizado_por') == colab['id']]
+        total_manutencoes = len(manutencoes_colab)
+        
+        # Calcular salário
+        if colab.get('tipo_funcionario') == 'mecanico':
+            # Mecânico: salário fixo + bonificação por produção
+            salario_base = colab.get('salario', 0)
+            bonus_producao = total_manutencoes * colab.get('bonus_por_producao', 0)
+            salario_total = salario_base + bonus_producao + colab.get('bonus', 0)
+        else:
+            # Motorista: salário + custo por tarefas
+            salario_base = colab.get('salario', 0)
+            custo_tasks = sum(t['custo_total'] for t in tasks_colab)
+            salario_total = salario_base + custo_tasks + colab.get('bonus', 0)
+        
+        total_pagamentos += salario_total
+        
+        pagamentos_colaboradores.append({
+            "nome": colab['name'],
+            "tipo": colab.get('tipo_funcionario', 'motorista'),
+            "diarias_trabalhadas": diarias,
+            "total_tasks": total_tasks,
+            "total_manutencoes": total_manutencoes,
+            "salario_base": colab.get('salario', 0),
+            "bonus": colab.get('bonus', 0),
+            "bonus_producao": total_manutencoes * colab.get('bonus_por_producao', 0) if colab.get('tipo_funcionario') == 'mecanico' else 0,
+            "salario_total": salario_total
+        })
+    
+    # Calcular lucro líquido
+    despesas_totais = despesas_tasks + despesas_gerais + despesas_manutencao + total_pagamentos
+    lucro_liquido = faturamento_total - despesas_totais
+    
+    return {
+        "mes": mes,
+        "ano": ano,
+        "periodo": f"{data_inicio} a {data_fim}",
+        "resumo_tarefas": {
+            "total_tarefas": len(tasks),
+            "total_manutencoes": len(manutencoes),
+            "por_tipo": {}
+        },
+        "faturamento": {
+            "total": faturamento_total
+        },
+        "despesas": {
+            "despesas_tasks": despesas_tasks,
+            "despesas_gerais": despesas_gerais,
+            "despesas_manutencao": despesas_manutencao,
+            "pagamentos_colaboradores": total_pagamentos,
+            "total": despesas_totais
+        },
+        "pagamentos_colaboradores": pagamentos_colaboradores,
+        "lucro_liquido": lucro_liquido,
+        "margem_lucro": (lucro_liquido / faturamento_total * 100) if faturamento_total > 0 else 0,
+        "registros_localizacao": {
+            "total_registros": len(registros_presenca),
+            "registros": registros_presenca[:50]  # Primeiros 50
+        }
+    }
+
 # Include the router in the main app
 app.include_router(api_router)
 
