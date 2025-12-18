@@ -137,7 +137,7 @@ export default function ProducaoTab() {
           ) : (
             <>
               {/* Summary Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm">Total Tasks</CardTitle>
@@ -158,10 +158,20 @@ export default function ProducaoTab() {
 
                 <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Custo Operacional</CardTitle>
+                    <CardTitle className="text-sm">Despesa Total</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-3xl font-bold">€{totalCusto.toFixed(2)}</div>
+                  </CardContent>
+                </Card>
+
+                <Card className={`bg-gradient-to-br ${lucroBruto >= 0 ? 'from-emerald-500 to-emerald-600' : 'from-red-500 to-red-600'} text-white`}>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">Lucro Bruto</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">€{lucroBruto.toFixed(2)}</div>
+                    <div className="text-sm mt-1">Margem: {margemLucro.toFixed(1)}%</div>
                   </CardContent>
                 </Card>
               </div>
