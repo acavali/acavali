@@ -5,6 +5,7 @@ import Login from "@/pages/Login";
 import AdminDashboard from "@/pages/AdminDashboard";
 import ColaboradorDashboard from "@/pages/ColaboradorDashboard";
 import { Toaster } from "@/components/ui/sonner";
+import InstallPWA from "@/components/InstallPWA";
 
 function App() {
   const [user, setUser] = useState(null);
