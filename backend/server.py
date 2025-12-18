@@ -1144,6 +1144,16 @@ async def get_relatorio_mensal(
     # Calcular despesas de manutenção
     despesas_manutencao = sum(m['custo'] for m in manutencoes)
     
+    # Filtrar despesas por tipo se especificado
+    if tipo_despesa and tipo_despesa != "todas":
+        if tipo_despesa == "gerais":
+            despesas_manutencao = 0
+        elif tipo_despesa == "manutencao":
+            despesas_gerais = 0
+        elif tipo_despesa == "tasks":
+            despesas_gerais = 0
+            despesas_manutencao = 0
+    
     # Calcular pagamentos por colaborador
     pagamentos_colaboradores = []
     total_pagamentos = 0
