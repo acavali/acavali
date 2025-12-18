@@ -103,6 +103,8 @@ export default function ProducaoTab() {
   const totalTasks = tasks.reduce((sum, t) => sum + t.quantidade, 0);
   const totalFaturamento = tasks.reduce((sum, t) => sum + (t.quantidade * (valoresContrato[t.tipo] || 3.00)), 0);
   const totalCusto = tasks.reduce((sum, t) => sum + t.custo_total, 0);
+  const lucroBruto = totalFaturamento - totalCusto;
+  const margemLucro = totalFaturamento > 0 ? ((lucroBruto / totalFaturamento) * 100) : 0;
 
   return (
     <div className="space-y-6">
