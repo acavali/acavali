@@ -199,6 +199,23 @@ export default function ColaboradorDashboard({ user, onLogout }) {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      // Registrar logout
+      try {
+        await axios.post(
+          `${API}/presenca/registrar`,
+          {
+            usuario_id: user.id,
+            tipo: "logout",
+            localizacao: null
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+      } catch (locError) {
+        console.error("Erro ao registrar logout:", locError);
+      }
+
       toast.success("Turno fechado com sucesso!");
       setShowFecharTurno(false);
       onLogout();
