@@ -55,6 +55,27 @@ export default function ColaboradorDashboard({ user, onLogout }) {
     litros_diesel: 0
   });
 
+  // Calculate automatic liters based on km_final
+  const calcularLitrosAutomatico = () => {
+    if (!turnoAtivo || !fecharForm.km_final || fecharForm.km_final <= turnoAtivo.km_inicial) {
+      return null;
+    }
+    
+    const kmRodado = fecharForm.km_final - turnoAtivo.km_inicial;
+    const veiculo = veiculos.find(v => v.id === turnoAtivo.veiculo_id);
+    
+    if (veiculo && veiculo.consumo_km_por_litro > 0) {
+      const litrosCalculados = kmRodado / veiculo.consumo_km_por_litro;
+      return {
+        litros: litrosCalculados,
+        kmRodado: kmRodado,
+        consumoMedio: veiculo.consumo_km_por_litro,
+        custoEstimado: litrosCalculados * (veiculo.custo_litro_diesel || 1.50)
+      };
+    }
+    return null;
+  };
+
   useEffect(() => {
     fetchVeiculos();
     checkTurnoAtivo();
