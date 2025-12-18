@@ -98,12 +98,14 @@ export default function ColaboradoresTab() {
       name: user.name,
       email: user.email,
       password: "",
+      tipo_funcionario: user.tipo_funcionario || "motorista",
       turno: user.turno,
       custo_swap: user.custo_swap,
       custo_move: user.custo_move,
       custo_rebalancing: user.custo_rebalancing,
       salario: user.salario,
       bonus: user.bonus,
+      bonus_por_producao: user.bonus_por_producao || 0,
       horas_extras: user.horas_extras
     });
     setOpenDialog(true);
@@ -115,12 +117,14 @@ export default function ColaboradoresTab() {
       name: "",
       email: "",
       password: "",
+      tipo_funcionario: "motorista",
       turno: "",
       custo_swap: 0,
       custo_move: 0,
       custo_rebalancing: 0,
       salario: 0,
       bonus: 0,
+      bonus_por_producao: 0,
       horas_extras: 0
     });
   };
