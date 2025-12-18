@@ -36,15 +36,47 @@ export default function RelatorioMensalTab() {
   // Lista de colaboradores para o select
   const [colaboradores, setColaboradores] = useState([]);
 
+  // Buscar colaboradores para o filtro
+  const buscarColaboradores = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API}/users/colaboradores`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setColaboradores(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Carregar colaboradores ao montar componente
+  useState(() => {
+    buscarColaboradores();
+  }, []);
+
   const gerarRelatorio = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
       const mesFormatado = mes.toString().padStart(2, '0');
-      const response = await axios.get(
-        `${API}/relatorios/mensal?mes=${mesFormatado}&ano=${ano}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      
+      // Construir query params com filtros
+      let url = `${API}/relatorios/mensal?mes=${mesFormatado}&ano=${ano}`;
+      
+      if (filtros.dataInicioCustom) url += `&data_inicio_custom=${filtros.dataInicioCustom}`;
+      if (filtros.dataFimCustom) url += `&data_fim_custom=${filtros.dataFimCustom}`;
+      if (filtros.colaboradorId) url += `&colaborador_id=${filtros.colaboradorId}`;
+      if (filtros.tipoFuncionario !== "todos") url += `&tipo_funcionario=${filtros.tipoFuncionario}`;
+      if (filtros.tipoTarefa !== "todas") url += `&tipo_tarefa=${filtros.tipoTarefa}`;
+      if (filtros.tipoDespesa !== "todas") url += `&tipo_despesa=${filtros.tipoDespesa}`;
+      if (filtros.valorMin) url += `&valor_min=${filtros.valorMin}`;
+      if (filtros.valorMax) url += `&valor_max=${filtros.valorMax}`;
+      if (filtros.localizacao) url += `&localizacao_filtro=${encodeURIComponent(filtros.localizacao)}`;
+      if (filtros.producaoMin) url += `&producao_min=${filtros.producaoMin}`;
+      
+      const response = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setRelatorio(response.data);
       toast.success("Relatório gerado com sucesso!");
     } catch (error) {
@@ -53,6 +85,21 @@ export default function RelatorioMensalTab() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const limparFiltros = () => {
+    setFiltros({
+      dataInicioCustom: "",
+      dataFimCustom: "",
+      colaboradorId: "",
+      tipoFuncionario: "todos",
+      tipoTarefa: "todas",
+      tipoDespesa: "todas",
+      valorMin: "",
+      valorMax: "",
+      localizacao: "",
+      producaoMin: ""
+    });
   };
 
   const exportarPDF = () => {
