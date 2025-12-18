@@ -1041,40 +1041,87 @@ async def get_registros_presenca(
 # ========== RELATÓRIO MENSAL ==========
 
 @api_router.get("/relatorios/mensal")
-async def get_relatorio_mensal(mes: str, ano: str, current_user: dict = Depends(get_current_user)):
+async def get_relatorio_mensal(
+    mes: str, 
+    ano: str,
+    data_inicio_custom: Optional[str] = None,
+    data_fim_custom: Optional[str] = None,
+    colaborador_id: Optional[str] = None,
+    tipo_funcionario: Optional[str] = None,  # "motorista", "mecanico", "todos"
+    tipo_tarefa: Optional[str] = None,  # "deploy", "swap", "move", "mecanica", "todas"
+    tipo_despesa: Optional[str] = None,  # "tasks", "gerais", "manutencao", "todas"
+    valor_min: Optional[float] = None,
+    valor_max: Optional[float] = None,
+    localizacao_filtro: Optional[str] = None,
+    producao_min: Optional[int] = None,
+    current_user: dict = Depends(get_current_user)
+):
     """
-    Gera relatório de fechamento mensal completo
+    Gera relatório de fechamento mensal completo com filtros avançados
     mes: formato "01" a "12"
     ano: formato "2025"
     """
-    # Datas do mês
-    data_inicio = f"{ano}-{mes}-01"
-    ultimo_dia = 31 if mes in ['01','03','05','07','08','10','12'] else 30 if mes in ['04','06','09','11'] else 28
-    data_fim = f"{ano}-{mes}-{ultimo_dia}"
+    # Datas do mês (ou período customizado)
+    if data_inicio_custom and data_fim_custom:
+        data_inicio = data_inicio_custom
+        data_fim = data_fim_custom
+    else:
+        data_inicio = f"{ano}-{mes}-01"
+        ultimo_dia = 31 if mes in ['01','03','05','07','08','10','12'] else 30 if mes in ['04','06','09','11'] else 28
+        data_fim = f"{ano}-{mes}-{ultimo_dia}"
     
-    # 1. Buscar todas as tasks do mês
-    tasks = await db.tasks.find({
-        "data": {"$gte": data_inicio, "$lte": data_fim}
-    }, {"_id": 0}).to_list(10000)
+    # 1. Buscar tasks com filtros
+    task_query = {"data": {"$gte": data_inicio, "$lte": data_fim}}
+    if colaborador_id:
+        task_query["colaborador_id"] = colaborador_id
+    if tipo_tarefa and tipo_tarefa != "todas":
+        task_query["tipo"] = tipo_tarefa
     
-    # 2. Buscar despesas do mês
-    despesas = await db.despesas.find({
-        "data": {"$gte": data_inicio, "$lte": data_fim}
-    }, {"_id": 0}).to_list(10000)
+    tasks = await db.tasks.find(task_query, {"_id": 0}).to_list(10000)
+    
+    # 2. Buscar despesas com filtros
+    despesa_query = {"data": {"$gte": data_inicio, "$lte": data_fim}}
+    if valor_min is not None or valor_max is not None:
+        despesa_query["valor"] = {}
+        if valor_min is not None:
+            despesa_query["valor"]["$gte"] = valor_min
+        if valor_max is not None:
+            despesa_query["valor"]["$lte"] = valor_max
+    
+    despesas = await db.despesas.find(despesa_query, {"_id": 0}).to_list(10000)
     
     # 3. Buscar manutenções do mês
-    manutencoes = await db.manutencoes.find({
-        "data_realizada": {"$gte": data_inicio, "$lte": data_fim}
-    }, {"_id": 0}).to_list(10000)
+    manutencao_query = {"data_realizada": {"$gte": data_inicio, "$lte": data_fim}}
+    if colaborador_id:
+        manutencao_query["realizado_por"] = colaborador_id
     
-    # 4. Buscar registros de presença (diárias)
-    registros_presenca = await db.registros_presenca.find({
+    manutencoes = await db.manutencoes.find(manutencao_query, {"_id": 0}).to_list(10000)
+    
+    # 4. Buscar registros de presença com filtro de localização
+    presenca_query = {
         "data": {"$gte": data_inicio, "$lte": data_fim},
         "tipo": "login"
-    }, {"_id": 0}).to_list(10000)
+    }
+    if colaborador_id:
+        presenca_query["usuario_id"] = colaborador_id
     
-    # 5. Buscar todos colaboradores
-    colaboradores = await db.users.find({"role": "colaborador"}, {"_id": 0}).to_list(100)
+    registros_presenca = await db.registros_presenca.find(presenca_query, {"_id": 0}).to_list(10000)
+    
+    # Filtro de localização (busca parcial no endereço)
+    if localizacao_filtro:
+        registros_presenca = [
+            r for r in registros_presenca 
+            if r.get('localizacao') and localizacao_filtro.lower() in r['localizacao'].get('endereco', '').lower()
+        ]
+    
+    # 5. Buscar colaboradores com filtros
+    colab_query = {"role": "colaborador"}
+    if tipo_funcionario and tipo_funcionario != "todos":
+        colab_query["tipo_funcionario"] = tipo_funcionario
+    if colaborador_id:
+        colab_query["id"] = colaborador_id
+    
+    colaboradores = await db.users.find(colab_query, {"_id": 0}).to_list(100)
     
     # Valores de contrato
     valoresContrato = {
