@@ -246,6 +246,94 @@ export default function ProducaoTab() {
                 </Card>
               </div>
 
+              {/* Análise Financeira Detalhada */}
+              <Card className="mb-6 border-2 border-emerald-200">
+                <CardHeader className="bg-gradient-to-r from-emerald-50 to-green-50">
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    💰 Análise Financeira do Dia
+                  </CardTitle>
+                  <CardDescription>Resumo detalhado de faturamento, despesas e lucro</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {/* Faturamento */}
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-500 font-medium">📈 Faturamento Bruto</p>
+                      <p className="text-3xl font-bold text-green-600">€{totalFaturamento.toFixed(2)}</p>
+                      <p className="text-xs text-gray-500">{totalTasks} tarefas realizadas</p>
+                    </div>
+
+                    {/* Despesa */}
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-500 font-medium">📉 Despesa Total</p>
+                      <p className="text-3xl font-bold text-orange-600">€{totalCusto.toFixed(2)}</p>
+                      <p className="text-xs text-gray-500">Custos operacionais</p>
+                    </div>
+
+                    {/* Lucro */}
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-500 font-medium">💎 Lucro Bruto</p>
+                      <p className={`text-3xl font-bold ${lucroBruto >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                        €{lucroBruto.toFixed(2)}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {lucroBruto >= 0 ? '✓ Operação lucrativa' : '✗ Operação no prejuízo'}
+                      </p>
+                    </div>
+
+                    {/* Margem */}
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-500 font-medium">📊 Margem de Lucro</p>
+                      <p className={`text-3xl font-bold ${margemLucro >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                        {margemLucro.toFixed(1)}%
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {margemLucro >= 50 ? '🔥 Excelente' : margemLucro >= 30 ? '✓ Boa' : '⚠️ Atenção'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Breakdown por Tipo */}
+                  <div className="mt-6 pt-6 border-t">
+                    <h4 className="font-semibold text-sm text-gray-700 mb-4">📋 Detalhamento por Tipo de Tarefa</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {chartData.map((item, index) => {
+                        const lucroItem = item.faturamento - item.custo;
+                        const margemItem = (lucroItem / item.faturamento) * 100;
+                        return (
+                          <div key={index} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <p className="font-semibold text-gray-800 mb-2">{item.tipo}</p>
+                            <div className="space-y-1 text-sm">
+                              <p className="flex justify-between">
+                                <span className="text-gray-600">Quantidade:</span>
+                                <span className="font-semibold">{item.quantidade}</span>
+                              </p>
+                              <p className="flex justify-between">
+                                <span className="text-gray-600">Faturamento:</span>
+                                <span className="font-semibold text-green-600">€{item.faturamento.toFixed(2)}</span>
+                              </p>
+                              <p className="flex justify-between">
+                                <span className="text-gray-600">Despesa:</span>
+                                <span className="font-semibold text-orange-600">€{item.custo.toFixed(2)}</span>
+                              </p>
+                              <p className="flex justify-between border-t pt-1">
+                                <span className="text-gray-700 font-medium">Lucro:</span>
+                                <span className={`font-bold ${lucroItem >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                                  €{lucroItem.toFixed(2)}
+                                </span>
+                              </p>
+                              <p className="text-xs text-gray-500 text-center">
+                                Margem: {margemItem.toFixed(1)}%
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Colaboradores List */}
               <div className="space-y-6">
                 {colaboradoresList.map((colab) => (
