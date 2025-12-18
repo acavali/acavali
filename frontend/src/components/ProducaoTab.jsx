@@ -347,7 +347,11 @@ export default function ProducaoTab() {
                         <div className="text-right">
                           <p className="text-sm text-gray-500">Total Tasks</p>
                           <p className="text-2xl font-bold text-blue-600">{colab.total_quantidade}</p>
-                          <p className="text-sm font-semibold text-green-600">Fat: €{colab.total_faturamento.toFixed(2)}</p>
+                          <div className="mt-2 space-y-1">
+                            <p className="text-xs text-gray-500">Faturamento: <span className="text-green-600 font-semibold">€{colab.total_faturamento.toFixed(2)}</span></p>
+                            <p className="text-xs text-gray-500">Despesa: <span className="text-orange-600 font-semibold">€{colab.total_custo.toFixed(2)}</span></p>
+                            <p className="text-xs text-gray-700">Lucro: <span className="text-emerald-600 font-bold">€{(colab.total_faturamento - colab.total_custo).toFixed(2)}</span></p>
+                          </div>
                         </div>
                       </div>
                     </CardHeader>
