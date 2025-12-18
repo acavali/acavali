@@ -50,7 +50,7 @@ export default function RelatorioMensalTab() {
   };
 
   // Carregar colaboradores ao montar componente
-  useState(() => {
+  useEffect(() => {
     buscarColaboradores();
   }, []);
 
