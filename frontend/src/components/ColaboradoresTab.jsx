@@ -252,10 +252,12 @@ export default function ColaboradoresTab() {
               )}
 
               <div className="space-y-3">
-                <Label className="text-base font-semibold">Informações Salariais (€)</Label>
+                <Label className="text-base font-semibold">
+                  💶 Informações Salariais (€) - {formData.tipo_funcionario === 'mecanico' ? 'Mecânico' : 'Motorista'}
+                </Label>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-sm">Salário Mensal</Label>
+                    <Label className="text-sm">Salário Mensal {formData.tipo_funcionario === 'mecanico' && '(Fixo)'}</Label>
                     <Input
                       type="number"
                       step="0.01"
