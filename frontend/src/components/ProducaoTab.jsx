@@ -363,31 +363,41 @@ export default function ProducaoTab() {
                             <TableHead>Quantidade</TableHead>
                             <TableHead>Custo Unit.</TableHead>
                             <TableHead>Faturamento</TableHead>
-                            <TableHead>Total</TableHead>
+                            <TableHead>Despesa</TableHead>
+                            <TableHead>Lucro</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {colab.tasks.map((task) => (
-                            <TableRow key={task.id}>
-                              <TableCell>
-                                <div className="flex items-center gap-2">
-                                  {taskIcons[task.tipo]}
-                                  <span>{taskLabels[task.tipo]}</span>
-                                </div>
-                              </TableCell>
-                              <TableCell>{task.quantidade}</TableCell>
-                              <TableCell>€{task.custo_unitario.toFixed(2)}</TableCell>
-                              <TableCell className="text-green-600 font-semibold">
-                                €{(task.quantidade * (valoresContrato[task.tipo] || 3.00)).toFixed(2)}
-                              </TableCell>
-                              <TableCell className="font-semibold">€{task.custo_total.toFixed(2)}</TableCell>
-                            </TableRow>
-                          ))}
+                          {colab.tasks.map((task) => {
+                            const faturamento = task.quantidade * (valoresContrato[task.tipo] || 3.00);
+                            const lucro = faturamento - task.custo_total;
+                            return (
+                              <TableRow key={task.id}>
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    {taskIcons[task.tipo]}
+                                    <span>{taskLabels[task.tipo]}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell>{task.quantidade}</TableCell>
+                                <TableCell>€{task.custo_unitario.toFixed(2)}</TableCell>
+                                <TableCell className="text-green-600 font-semibold">
+                                  €{faturamento.toFixed(2)}
+                                </TableCell>
+                                <TableCell className="text-orange-600 font-semibold">
+                                  €{task.custo_total.toFixed(2)}
+                                </TableCell>
+                                <TableCell className="text-emerald-600 font-bold">
+                                  €{lucro.toFixed(2)}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
                           <TableRow className="bg-gray-50 font-semibold">
-                            <TableCell colSpan={2}>Total do Colaborador</TableCell>
-                            <TableCell></TableCell>
+                            <TableCell colSpan={3}>Total do Colaborador</TableCell>
                             <TableCell className="text-green-600">€{colab.total_faturamento.toFixed(2)}</TableCell>
-                            <TableCell>€{colab.total_custo.toFixed(2)}</TableCell>
+                            <TableCell className="text-orange-600">€{colab.total_custo.toFixed(2)}</TableCell>
+                            <TableCell className="text-emerald-600 font-bold">€{(colab.total_faturamento - colab.total_custo).toFixed(2)}</TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
