@@ -482,7 +482,7 @@ async def create_registro_veiculo(registro_data: RegistroVeiculoCreate, current_
         km_inicial=registro_data.km_inicial,
         km_final=registro_data.km_final,
         km_rodado=km_rodado,
-        litros_diesel=registro_data.litros_diesel or 0,
+        litros_diesel=litros_diesel,
         custo_diesel=custo_diesel,
         km_por_litro=km_por_litro,
         data=data
