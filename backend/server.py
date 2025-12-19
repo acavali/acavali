@@ -13,8 +13,10 @@ from datetime import datetime, timezone, timedelta
 import jwt
 import re
 from passlib.context import CryptContext
+from twilio.rest import Client as TwilioClient
 
 ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / '.env')
 
 # Função para normalizar número de telefone (remove espaços, +, traços)
 def normalize_phone(phone: str) -> str:
@@ -22,7 +24,43 @@ def normalize_phone(phone: str) -> str:
         return phone
     # Remove todos os caracteres não numéricos
     return re.sub(r'[^\d]', '', phone)
-load_dotenv(ROOT_DIR / '.env')
+
+# Configuração Twilio WhatsApp
+TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
+TWILIO_WHATSAPP_NUMBER = os.environ.get('TWILIO_WHATSAPP_NUMBER', '+14155238886')
+ADMIN_WHATSAPP_NUMBER = os.environ.get('ADMIN_WHATSAPP_NUMBER', '+393518356989')
+
+# Inicializar cliente Twilio
+twilio_client = None
+if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
+    try:
+        twilio_client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+        logging.info("Twilio WhatsApp client initialized successfully")
+    except Exception as e:
+        logging.error(f"Failed to initialize Twilio client: {e}")
+
+def send_whatsapp_notification(to_number: str, message: str):
+    """Envia notificação via WhatsApp usando Twilio"""
+    if not twilio_client:
+        logging.warning("Twilio client not configured, skipping WhatsApp notification")
+        return False
+    
+    try:
+        # Formatar número para WhatsApp
+        if not to_number.startswith('+'):
+            to_number = '+' + to_number
+        
+        msg = twilio_client.messages.create(
+            from_=f'whatsapp:{TWILIO_WHATSAPP_NUMBER}',
+            body=message,
+            to=f'whatsapp:{to_number}'
+        )
+        logging.info(f"WhatsApp sent to {to_number}: {msg.sid}")
+        return True
+    except Exception as e:
+        logging.error(f"Failed to send WhatsApp: {e}")
+        return False
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
