@@ -570,8 +570,16 @@ export default function ColaboradoresTab() {
                     <TableCell className="font-medium">{colab.name}</TableCell>
                     <TableCell>{colab.email}</TableCell>
                     <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs ${colab.tipo_funcionario === 'mecanico' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}`}>
-                        {colab.tipo_funcionario === 'mecanico' ? '🔧 Mecânico' : '👨‍✈️ Motorista'}
+                      <span className={`px-2 py-1 rounded-full text-xs ${
+                        colab.tipo_funcionario === 'mecanico' ? 'bg-purple-100 text-purple-800' : 
+                        colab.tipo_funcionario === 'socio' ? 'bg-blue-100 text-blue-800' :
+                        colab.tipo_funcionario === 'gestor' ? 'bg-orange-100 text-orange-800' :
+                        'bg-green-100 text-green-800'
+                      }`}>
+                        {colab.tipo_funcionario === 'mecanico' ? '🔧 Mecânico' : 
+                         colab.tipo_funcionario === 'socio' ? '👔 Sócio' :
+                         colab.tipo_funcionario === 'gestor' ? '📋 Gestor' :
+                         '👨‍✈️ Motorista'}
                       </span>
                     </TableCell>
                     <TableCell><span className="capitalize px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">{colab.turno}</span></TableCell>
