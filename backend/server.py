@@ -1154,6 +1154,29 @@ async def registrar_presenca(registro_data: RegistroPresencaCreate, current_user
     doc['created_at'] = doc['created_at'].isoformat()
     
     await db.registros_presenca.insert_one(doc)
+    
+    # Enviar notificação WhatsApp - Login/Logout de colaborador
+    tipo_emoji = "🟢" if registro_data.tipo == "login" else "🔴"
+    tipo_texto = "Login" if registro_data.tipo == "login" else "Logout"
+    
+    # Formatar localização
+    local_texto = "Não disponível"
+    if registro_data.localizacao:
+        local_texto = registro_data.localizacao.get('endereco', f"{registro_data.localizacao.get('latitude', '')}, {registro_data.localizacao.get('longitude', '')}")
+    
+    message = f"""{tipo_emoji} *Point Controll - {tipo_texto}*
+
+👤 Colaborador: {user['name']}
+📋 Função: {user.get('tipo_funcionario', 'N/A').title()}
+📅 Data: {data}
+🕐 Horário: {hora}
+📍 Local: {local_texto}
+
+✅ Registro realizado!"""
+    
+    # Enviar para admin
+    send_whatsapp_notification(ADMIN_WHATSAPP_NUMBER, message)
+    
     return registro_obj
 
 @api_router.get("/presenca/registros")
