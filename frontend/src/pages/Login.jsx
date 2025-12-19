@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Bike, Lock, Mail } from "lucide-react";
+import { Lock, Mail, Phone } from "lucide-react";
 import LanguageSelector from "@/components/LanguageSelector";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -14,7 +15,9 @@ const API = `${BACKEND_URL}/api`;
 
 export default function Login({ onLogin }) {
   const { t } = useTranslation();
+  const [loginMethod, setLoginMethod] = useState("email");
   const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -25,7 +28,6 @@ export default function Login({ onLogin }) {
           async (position) => {
             const { latitude, longitude } = position.coords;
             try {
-              // Tentar obter endereço usando a API de Geocoding do OpenStreetMap
               const geoResponse = await fetch(
                 `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
               );
@@ -59,10 +61,18 @@ export default function Login({ onLogin }) {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API}/auth/login`, {
-        email,
+      // Preparar payload baseado no método de login
+      const payload = {
         password,
-      });
+      };
+      
+      if (loginMethod === "email") {
+        payload.email = email;
+      } else {
+        payload.telefone = telefone;
+      }
+
+      const response = await axios.post(`${API}/auth/login`, payload);
 
       const token = response.data.access_token;
       const user = response.data.user;
@@ -84,7 +94,6 @@ export default function Login({ onLogin }) {
         );
       } catch (locError) {
         console.error("Erro ao registrar localização:", locError);
-        // Continua mesmo se falhar o registro de localização
       }
 
       onLogin(user, token);
@@ -115,22 +124,54 @@ export default function Login({ onLogin }) {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">{t('common.email')}</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder={t('login.emailPlaceholder')}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="pl-10"
-                  data-testid="email-input"
-                />
-              </div>
-            </div>
+            {/* Tabs for Email/Phone */}
+            <Tabs value={loginMethod} onValueChange={setLoginMethod} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="email" className="flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  {t('login.withEmail')}
+                </TabsTrigger>
+                <TabsTrigger value="phone" className="flex items-center gap-2">
+                  <Phone className="w-4 h-4" />
+                  {t('login.withPhone')}
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="email" className="space-y-2 mt-0">
+                <Label htmlFor="email">{t('common.email')}</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder={t('login.emailPlaceholder')}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required={loginMethod === "email"}
+                    className="pl-10"
+                    data-testid="email-input"
+                  />
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="phone" className="space-y-2 mt-0">
+                <Label htmlFor="telefone">{t('login.phone')}</Label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                  <Input
+                    id="telefone"
+                    type="tel"
+                    placeholder={t('login.phonePlaceholder')}
+                    value={telefone}
+                    onChange={(e) => setTelefone(e.target.value)}
+                    required={loginMethod === "phone"}
+                    className="pl-10"
+                    data-testid="phone-input"
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
+
             <div className="space-y-2">
               <Label htmlFor="password">{t('common.password')}</Label>
               <div className="relative">
@@ -147,6 +188,7 @@ export default function Login({ onLogin }) {
                 />
               </div>
             </div>
+            
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-2 rounded-lg transition-all"
