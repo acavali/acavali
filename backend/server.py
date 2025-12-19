@@ -876,6 +876,61 @@ async def get_proximas_manutencoes(veiculo_id: str, km_atual: float, current_use
     
     return proximas
 
+@api_router.post("/manutencoes/verificar-alertas")
+async def verificar_alertas_manutencao(current_user: dict = Depends(get_current_user)):
+    """
+    Verifica manutenções próximas ou atrasadas e envia alertas WhatsApp
+    """
+    veiculos = await db.veiculos.find({}, {"_id": 0}).to_list(1000)
+    alertas_enviados = []
+    
+    for veiculo in veiculos:
+        # Buscar último registro de km do veículo
+        ultimo_registro = await db.registros_veiculos.find_one(
+            {"veiculo_id": veiculo['id'], "km_final": {"$ne": None}},
+            {"_id": 0}
+        )
+        
+        if not ultimo_registro:
+            continue
+            
+        km_atual = ultimo_registro.get('km_final', 0)
+        
+        # Buscar manutenções com km_proxima_troca
+        manutencoes = await db.manutencoes.find(
+            {"veiculo_id": veiculo['id'], "km_proxima_troca": {"$ne": None}},
+            {"_id": 0}
+        ).sort("data_realizada", -1).to_list(100)
+        
+        for manutencao in manutencoes:
+            km_proxima = manutencao.get('km_proxima_troca', 0)
+            km_faltante = km_proxima - km_atual
+            
+            # Enviar alerta se faltam menos de 500km ou está atrasada
+            if km_faltante < 500:
+                status_emoji = "🔴" if km_faltante < 0 else "🟡"
+                status_texto = "ATRASADA" if km_faltante < 0 else "PRÓXIMA"
+                
+                message = f"""{status_emoji} *Point Controll - Alerta de Manutenção {status_texto}*
+
+🚙 Veículo: {veiculo['placa']} ({veiculo['modelo']})
+🛠️ Tipo: {manutencao['tipo']}
+📝 Serviço: {manutencao['descricao']}
+📊 KM Atual: {km_atual} km
+📊 KM Próxima Troca: {km_proxima} km
+⚠️ KM Faltante: {km_faltante} km
+
+{'❗ MANUTENÇÃO ATRASADA! Agende imediatamente!' if km_faltante < 0 else '⚠️ Agende a manutenção em breve!'}"""
+                
+                send_whatsapp_notification(ADMIN_WHATSAPP_NUMBER, message)
+                alertas_enviados.append({
+                    "veiculo": veiculo['placa'],
+                    "tipo": manutencao['tipo'],
+                    "km_faltante": km_faltante
+                })
+    
+    return {"alertas_enviados": len(alertas_enviados), "detalhes": alertas_enviados}
+
 @api_router.delete("/manutencoes/{manutencao_id}")
 async def delete_manutencao(manutencao_id: str, current_user: dict = Depends(get_current_user)):
     if current_user['role'] != 'admin':
