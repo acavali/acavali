@@ -122,13 +122,25 @@ export default function ColaboradoresTab() {
       password: "",
       tipo_funcionario: user.tipo_funcionario || "motorista",
       turno: user.turno,
-      custo_swap: user.custo_swap,
-      custo_move: user.custo_move,
-      custo_rebalancing: user.custo_rebalancing,
-      salario: user.salario,
-      bonus: user.bonus,
+      cpf: user.cpf || "",
+      telefone: user.telefone || "",
+      endereco: user.endereco || "",
+      tipo_contrato: user.tipo_contrato || "contrato",
+      forma_faturamento: user.forma_faturamento || "salario_fixo",
+      valor_diaria: user.valor_diaria || 0,
+      valor_por_task: user.valor_por_task || 0,
+      custo_swap: user.custo_swap || 0,
+      custo_move: user.custo_move || 0,
+      custo_rebalancing: user.custo_rebalancing || 0,
+      salario: user.salario || 0,
+      bonus: user.bonus || 0,
       bonus_por_producao: user.bonus_por_producao || 0,
-      horas_extras: user.horas_extras
+      horas_extras: user.horas_extras || 0,
+      banco: user.banco || "",
+      agencia: user.agencia || "",
+      conta: user.conta || "",
+      tipo_conta: user.tipo_conta || "",
+      pix: user.pix || ""
     });
     setOpenDialog(true);
   };
@@ -141,13 +153,25 @@ export default function ColaboradoresTab() {
       password: "",
       tipo_funcionario: "motorista",
       turno: "",
+      cpf: "",
+      telefone: "",
+      endereco: "",
+      tipo_contrato: "contrato",
+      forma_faturamento: "salario_fixo",
+      valor_diaria: 0,
+      valor_por_task: 0,
       custo_swap: 0,
       custo_move: 0,
       custo_rebalancing: 0,
       salario: 0,
       bonus: 0,
       bonus_por_producao: 0,
-      horas_extras: 0
+      horas_extras: 0,
+      banco: "",
+      agencia: "",
+      conta: "",
+      tipo_conta: "",
+      pix: ""
     });
   };
 
