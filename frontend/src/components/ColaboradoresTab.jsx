@@ -291,6 +291,93 @@ export default function ColaboradoresTab() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="space-y-2">
+                  <Label>Tipo de Contrato</Label>
+                  <Select value={formData.tipo_contrato} onValueChange={(val) => setFormData({ ...formData, tipo_contrato: val })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
+                    <SelectContent className="z-[9999]">
+                      <SelectItem value="contrato">📄 Contrato</SelectItem>
+                      <SelectItem value="partida_iva">🏢 Partita IVA</SelectItem>
+                      <SelectItem value="parttime">⏰ Part-time</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Forma de Faturamento */}
+              <div className="border-t pt-4">
+                <Label className="text-base font-semibold mb-3 block">💶 Forma de Faturamento</Label>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Selecione a forma de pagamento</Label>
+                    <Select value={formData.forma_faturamento} onValueChange={(val) => setFormData({ ...formData, forma_faturamento: val })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione..." />
+                      </SelectTrigger>
+                      <SelectContent className="z-[9999]">
+                        <SelectItem value="diaria">📅 Diária - Recebe por dias trabalhados</SelectItem>
+                        <SelectItem value="salario_fixo">💰 Salário Fixo - Valor fixo mensal</SelectItem>
+                        <SelectItem value="producao">📊 Produção - Recebe por task executada</SelectItem>
+                        <SelectItem value="diaria_producao">📅+📊 Diária + Produção</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Campos condicionais baseados na forma de faturamento */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {(formData.forma_faturamento === 'diaria' || formData.forma_faturamento === 'diaria_producao') && (
+                      <div className="space-y-2">
+                        <Label>Valor da Diária (€)</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={formData.valor_diaria}
+                          onChange={(e) => setFormData({ ...formData, valor_diaria: parseFloat(e.target.value) })}
+                          placeholder="Ex: 50.00"
+                        />
+                      </div>
+                    )}
+                    
+                    {formData.forma_faturamento === 'salario_fixo' && (
+                      <div className="space-y-2">
+                        <Label>Salário Mensal (€)</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={formData.salario}
+                          onChange={(e) => setFormData({ ...formData, salario: parseFloat(e.target.value) })}
+                          placeholder="Ex: 1500.00"
+                        />
+                      </div>
+                    )}
+
+                    {(formData.forma_faturamento === 'producao' || formData.forma_faturamento === 'diaria_producao') && (
+                      <div className="space-y-2">
+                        <Label>Valor por Task (€)</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={formData.valor_por_task}
+                          onChange={(e) => setFormData({ ...formData, valor_por_task: parseFloat(e.target.value) })}
+                          placeholder="Ex: 3.00"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Info sobre o cálculo */}
+                  <Alert className="bg-blue-50 border-blue-200">
+                    <AlertDescription className="text-sm">
+                      <strong>Como será calculado:</strong>
+                      {formData.forma_faturamento === 'diaria' && ' Dias Trabalhados × Valor da Diária'}
+                      {formData.forma_faturamento === 'salario_fixo' && ' Valor fixo mensal'}
+                      {formData.forma_faturamento === 'producao' && ' Quantidade de Tasks × Valor por Task'}
+                      {formData.forma_faturamento === 'diaria_producao' && ' (Dias × Diária) + (Tasks × Valor por Task)'}
+                    </AlertDescription>
+                  </Alert>
+                </div>
               </div>
 
               {/* Custos por Tarefa - Somente para Motoristas */}
