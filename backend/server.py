@@ -40,7 +40,7 @@ class UserCreate(BaseModel):
     email: str
     password: str
     role: str  # "admin" or "colaborador"
-    tipo_funcionario: Optional[str] = "motorista"  # "motorista" or "mecanico"
+    tipo_funcionario: Optional[str] = "motorista"  # "motorista", "mecanico", "socio", "gestor"
     turno: Optional[str] = None  # "dia" or "noite"
     
     # Informações Pessoais
