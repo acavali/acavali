@@ -335,10 +335,19 @@ async def register(user_data: UserCreate):
 @api_router.post("/auth/login", response_model=Token)
 async def login(credentials: UserLogin):
     # Buscar usuário por email ou telefone
+    user = None
     if credentials.email:
         user = await db.users.find_one({"email": credentials.email}, {"_id": 0})
     elif credentials.telefone:
-        user = await db.users.find_one({"telefone": credentials.telefone}, {"_id": 0})
+        # Normalizar telefone para busca flexível
+        phone_normalized = normalize_phone(credentials.telefone)
+        
+        # Buscar todos usuários e comparar telefone normalizado
+        all_users = await db.users.find({}, {"_id": 0}).to_list(1000)
+        for u in all_users:
+            if u.get('telefone') and normalize_phone(u['telefone']) == phone_normalized:
+                user = u
+                break
     else:
         raise HTTPException(status_code=400, detail="Email ou telefone é obrigatório")
     
