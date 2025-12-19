@@ -113,7 +113,8 @@ class User(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserLogin(BaseModel):
-    email: str
+    email: Optional[str] = None
+    telefone: Optional[str] = None
     password: str
 
 class Token(BaseModel):
@@ -325,7 +326,14 @@ async def register(user_data: UserCreate):
 
 @api_router.post("/auth/login", response_model=Token)
 async def login(credentials: UserLogin):
-    user = await db.users.find_one({"email": credentials.email}, {"_id": 0})
+    # Buscar usuário por email ou telefone
+    if credentials.email:
+        user = await db.users.find_one({"email": credentials.email}, {"_id": 0})
+    elif credentials.telefone:
+        user = await db.users.find_one({"telefone": credentials.telefone}, {"_id": 0})
+    else:
+        raise HTTPException(status_code=400, detail="Email ou telefone é obrigatório")
+    
     if not user or not verify_password(credentials.password, user['password']):
         raise HTTPException(status_code=401, detail="Credenciais inválidas")
     
