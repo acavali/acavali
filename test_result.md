@@ -102,53 +102,33 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Sistema multi-idioma com Italiano como padrão. Testar se a troca de idiomas funciona corretamente na página de login e no Admin Dashboard."
+user_problem_statement: "Login com opção de Email ou Telefone usando tabs. Testar se o login funciona corretamente com ambos os métodos."
 
 frontend:
-  - task: "Multi-language system with i18next"
+  - task: "Login with Email/Phone tabs"
     implemented: true
-    working: true
-    file: "/app/frontend/src/i18n/config.js"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        - working: "NA"
-        - agent: "main"
-        - comment: "Implemented i18n with react-i18next. Italian is default language. Added LanguageSelector component to Login and AdminDashboard pages. Updated translation files for IT, PT, EN."
-        - working: true
-        - agent: "testing"
-        - comment: "✅ PASSED: Multi-language system working perfectly. Italian is default language as expected. i18n configuration correctly set with fallbackLng: 'it' and lng: 'it'. All translation files (it.json, pt.json, en.json) are properly structured and loaded."
-
-  - task: "Login page with translations"
-    implemented: true
-    working: true
+    working: "NA"
     file: "/app/frontend/src/pages/Login.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
         - agent: "main"
-        - comment: "Added useTranslation hook and translated all text to use i18n keys. LanguageSelector added to top-right corner."
-        - working: true
-        - agent: "testing"
-        - comment: "✅ PASSED: Login page translations working perfectly. Default Italian text verified: 'Sistema di Produzione', 'Email', 'Password', 'Accedi'. Language selector visible in top-right corner. Successfully tested switching to Portuguese ('Sistema de Produção', 'Senha', 'Entrar') and English ('Production System', 'Password', 'Login'). All language switches work seamlessly."
+        - comment: "Added tabs to switch between Email and Phone login. Updated Login.jsx with Tabs component. Phone field has international format placeholder (+39 XXX XXX XXXX). Translations added for IT, PT, EN."
 
-  - task: "AdminDashboard with translations"
+backend:
+  - task: "Login API supports email or phone"
     implemented: true
     working: true
-    file: "/app/frontend/src/pages/AdminDashboard.jsx"
+    file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
-        - working: "NA"
-        - agent: "main"
-        - comment: "Added useTranslation hook and translated header, cards, and tabs to use i18n keys."
         - working: true
-        - agent: "testing"
-        - comment: "✅ PASSED: AdminDashboard translations working perfectly. Successfully logged in with provided credentials (andrecavali@gmail.com). Italian text verified: 'Dashboard Admin', 'Benvenuto, Andre Cavali', tabs showing 'Produzione', 'Collaboratori', 'Veicoli', 'Spese', 'Rapporti'. Language switching tested on dashboard - Portuguese shows 'Bem-vindo', English shows 'Welcome'. Logout button correctly shows 'Esci' in Italian."
+        - agent: "main"
+        - comment: "Updated UserLogin model to accept optional email or telefone. Updated login endpoint to search by email OR phone. Tested via curl - both methods work correctly."
 
 metadata:
   created_by: "main_agent"
