@@ -1,7 +1,7 @@
 {
-  "short_name": "Produção Bikes",
-  "name": "Sistema de Produção - Bicicletas Elétricas",
-  "description": "Controle de Bicicletas Elétricas - Milão, Itália",
+  "short_name": "Point Controll",
+  "name": "Point Controll - Gestione Biciclette Elettriche",
+  "description": "Sistema di Gestione Biciclette Elettriche - Milano, Italia",
   "icons": [
     {
       "src": "icon-192.png",
