@@ -225,7 +225,7 @@ export default function ColaboradoresTab() {
                 <Label className="text-base font-semibold mb-3 block">📋 Informações Pessoais</Label>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label>CPF</Label>
+                    <Label>Codice Fiscale (CF)</Label>
                     <Input
                       value={formData.cpf}
                       onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
@@ -274,6 +274,8 @@ export default function ColaboradoresTab() {
                     <SelectContent className="z-[9999]">
                       <SelectItem value="motorista">👨‍✈️ Motorista</SelectItem>
                       <SelectItem value="mecanico">🔧 Mecânico</SelectItem>
+                      <SelectItem value="socio">👔 Sócio</SelectItem>
+                      <SelectItem value="gestor">📋 Gestor</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
