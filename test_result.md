@@ -107,15 +107,18 @@ user_problem_statement: "Login com opção de Email ou Telefone usando tabs. Tes
 frontend:
   - task: "Login with Email/Phone tabs"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/pages/Login.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
         - agent: "main"
         - comment: "Added tabs to switch between Email and Phone login. Updated Login.jsx with Tabs component. Phone field has international format placeholder (+39 XXX XXX XXXX). Translations added for IT, PT, EN."
+        - working: true
+        - agent: "testing"
+        - comment: "COMPREHENSIVE TESTING COMPLETED - ALL TESTS PASSED! ✅ Login page layout: Two tabs visible ('Email' and 'Telefono' in Italian), Email tab selected by default ✅ Email field: Correct placeholder 'tua@email.com', email icon visible ✅ Phone tab: Switches correctly, shows phone field with placeholder '+39 XXX XXX XXXX', phone icon visible ✅ Email login: Successfully logs in with andrecavali@gmail.com/Fe@012022 and redirects to Admin Dashboard ✅ Phone login: Successfully logs in with +39 333 123 4567/Fe@012022 and redirects to Admin Dashboard ✅ Logout: Works correctly, redirects back to login page ✅ Success toast: 'Accesso effettuato con successo!' appears after login ✅ All UI elements have proper data-testid attributes for testing. Feature is fully functional and meets all requirements."
 
 backend:
   - task: "Login API supports email or phone"
