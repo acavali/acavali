@@ -12,6 +12,7 @@ import RelatorioMensalTab from "@/components/RelatorioMensalTab";
 import ProducaoTab from "@/components/ProducaoTab";
 import VeiculosTab from "@/components/VeiculosTab";
 import DespesasTab from "@/components/DespesasTab";
+import LanguageSelector from "@/components/LanguageSelector";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
