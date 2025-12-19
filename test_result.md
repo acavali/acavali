@@ -137,13 +137,12 @@ metadata:
   run_ui: true
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Login with Email/Phone tabs"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
     - agent: "main"
-    - message: "Implemented multi-language feature with react-i18next. Italian is the default language. Please test: 1) Login page shows in Italian by default 2) Language selector works and changes the UI text 3) AdminDashboard shows translated text in Italian. Credentials: email=andrecavali@gmail.com, password=Fe@012022"
-    - agent: "testing"
-    - message: "✅ MULTI-LANGUAGE TESTING COMPLETED SUCCESSFULLY: All 3 tasks are working perfectly. Italian is correctly set as default language. Language switching works seamlessly between Italian, Portuguese, and English on both Login page and AdminDashboard. All translations are accurate and complete. Login success with provided credentials. No issues found - feature is ready for production use."
+    - message: "Implemented login with Email/Phone option using tabs. Please test: 1) Login page shows tabs for Email and Telefono 2) Email tab works with email login (andrecavali@gmail.com, Fe@012022) 3) Phone tab shows phone field with +39 placeholder 4) Phone login works with telefone=+39 333 123 4567, password=Fe@012022. Both methods should successfully log in the admin user."
