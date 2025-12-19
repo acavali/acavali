@@ -407,6 +407,116 @@ async def login(credentials: UserLogin):
         "user": User(**user)
     }
 
+@api_router.post("/setup/usuarios")
+async def setup_usuarios_iniciais():
+    """
+    Endpoint para criar usuários iniciais (sócios e gestores).
+    Chamar apenas uma vez após o deploy.
+    """
+    usuarios_criados = []
+    usuarios_existentes = []
+    
+    usuarios_para_criar = [
+        # Admin/Sócio principal
+        {
+            "name": "Andre Cavali",
+            "email": "andrecavali@gmail.com",
+            "telefone": "+39 351 835 6989",
+            "password": get_password_hash("Fe@012022"),
+            "role": "admin",
+            "tipo_funcionario": "socio",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "salario_fixo"
+        },
+        # Sócios
+        {
+            "name": "Osvair Colloni",
+            "email": "osvair.colloni@pointcontroll.com",
+            "telefone": "+39 329 278 8578",
+            "password": get_password_hash("Dott1234"),
+            "role": "admin",
+            "tipo_funcionario": "socio",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "salario_fixo"
+        },
+        {
+            "name": "Robsom Carboni",
+            "email": "robsom.carboni@pointcontroll.com",
+            "telefone": "+39 348 769 2468",
+            "password": get_password_hash("Dott1234"),
+            "role": "admin",
+            "tipo_funcionario": "socio",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "salario_fixo"
+        },
+        # Gestores
+        {
+            "name": "Sergio Marciano",
+            "email": "sergio.marciano@pointcontroll.com",
+            "telefone": "+39 342 141 0547",
+            "password": get_password_hash("Dott1234"),
+            "role": "admin",
+            "tipo_funcionario": "gestor",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "salario_fixo"
+        },
+        {
+            "name": "Izabel",
+            "email": "izabel@pointcontroll.com",
+            "telefone": "+39 342 010 5507",
+            "password": get_password_hash("Dott1234"),
+            "role": "admin",
+            "tipo_funcionario": "gestor",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "salario_fixo"
+        }
+    ]
+    
+    for user_data in usuarios_para_criar:
+        # Verificar se já existe (por email ou telefone)
+        existing = await db.users.find_one({
+            "$or": [
+                {"email": user_data["email"]},
+                {"telefone": user_data["telefone"]}
+            ]
+        })
+        
+        if existing:
+            usuarios_existentes.append(user_data["name"])
+            continue
+        
+        # Criar usuário
+        user_data["id"] = str(uuid.uuid4())
+        user_data["created_at"] = datetime.now(timezone.utc).isoformat()
+        user_data["turno"] = None
+        user_data["cpf"] = None
+        user_data["endereco"] = None
+        user_data["valor_diaria"] = 0.0
+        user_data["valor_por_task"] = 0.0
+        user_data["custo_swap"] = 0.0
+        user_data["custo_move"] = 0.0
+        user_data["custo_rebalancing"] = 0.0
+        user_data["salario"] = 0.0
+        user_data["bonus"] = 0.0
+        user_data["bonus_por_producao"] = 0.0
+        user_data["horas_extras"] = 0.0
+        user_data["banco"] = None
+        user_data["agencia"] = None
+        user_data["conta"] = None
+        user_data["tipo_conta"] = None
+        user_data["pix"] = None
+        
+        await db.users.insert_one(user_data)
+        usuarios_criados.append(user_data["name"])
+    
+    return {
+        "message": "Setup concluído!",
+        "usuarios_criados": usuarios_criados,
+        "usuarios_existentes": usuarios_existentes,
+        "total_criados": len(usuarios_criados),
+        "total_existentes": len(usuarios_existentes)
+    }
+
 @api_router.get("/auth/me", response_model=User)
 async def get_me(current_user: dict = Depends(get_current_user)):
     if isinstance(current_user['created_at'], str):
