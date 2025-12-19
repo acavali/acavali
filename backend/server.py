@@ -11,9 +11,17 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone, timedelta
 import jwt
+import re
 from passlib.context import CryptContext
 
 ROOT_DIR = Path(__file__).parent
+
+# Função para normalizar número de telefone (remove espaços, +, traços)
+def normalize_phone(phone: str) -> str:
+    if not phone:
+        return phone
+    # Remove todos os caracteres não numéricos
+    return re.sub(r'[^\d]', '', phone)
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
