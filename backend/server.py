@@ -620,6 +620,23 @@ async def create_registro_veiculo(registro_data: RegistroVeiculoCreate, current_
     doc['created_at'] = doc['created_at'].isoformat()
     
     await db.registros_veiculos.insert_one(doc)
+    
+    # Enviar notificação WhatsApp - Início do Turno
+    if motorista.get('tipo_funcionario') == 'motorista':
+        now = datetime.now(timezone.utc)
+        message = f"""🚗 *Point Controll - Início de Turno*
+
+👤 Motorista: {motorista['name']}
+🚙 Veículo: {veiculo['placa']} ({veiculo['modelo']})
+📊 KM Inicial: {registro_data.km_inicial} km
+📅 Data: {data}
+🕐 Horário: {now.strftime('%H:%M')}
+
+✅ Turno iniciado com sucesso!"""
+        
+        # Enviar para admin
+        send_whatsapp_notification(ADMIN_WHATSAPP_NUMBER, message)
+    
     return registro_obj
 
 @api_router.get("/registros-veiculos", response_model=List[RegistroVeiculo])
