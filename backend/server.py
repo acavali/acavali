@@ -42,13 +42,35 @@ class UserCreate(BaseModel):
     role: str  # "admin" or "colaborador"
     tipo_funcionario: Optional[str] = "motorista"  # "motorista" or "mecanico"
     turno: Optional[str] = None  # "dia" or "noite"
+    
+    # Informações Pessoais
+    cpf: Optional[str] = None
+    telefone: Optional[str] = None
+    endereco: Optional[str] = None
+    
+    # Tipo de Contrato
+    tipo_contrato: Optional[str] = "contrato"  # "contrato", "partida_iva", "parttime"
+    
+    # Forma de Faturamento
+    forma_faturamento: Optional[str] = "salario_fixo"  # "diaria", "salario_fixo", "producao", "diaria_producao"
+    valor_diaria: Optional[float] = 0.0
+    valor_por_task: Optional[float] = 0.0
+    
+    # Campos antigos (manter compatibilidade)
     custo_swap: Optional[float] = 0.0
     custo_move: Optional[float] = 0.0
     custo_rebalancing: Optional[float] = 0.0
     salario: Optional[float] = 0.0
     bonus: Optional[float] = 0.0
-    bonus_por_producao: Optional[float] = 0.0  # Para mecânicos
+    bonus_por_producao: Optional[float] = 0.0
     horas_extras: Optional[float] = 0.0
+    
+    # Dados Bancários
+    banco: Optional[str] = None
+    agencia: Optional[str] = None
+    conta: Optional[str] = None
+    tipo_conta: Optional[str] = None  # "corrente" or "poupanca"
+    pix: Optional[str] = None
 
 class User(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -56,15 +78,38 @@ class User(BaseModel):
     name: str
     email: str
     role: str
-    tipo_funcionario: str = "motorista"  # "motorista" or "mecanico"
+    tipo_funcionario: str = "motorista"
     turno: Optional[str] = None
+    
+    # Informações Pessoais
+    cpf: Optional[str] = None
+    telefone: Optional[str] = None
+    endereco: Optional[str] = None
+    
+    # Tipo de Contrato
+    tipo_contrato: str = "contrato"
+    
+    # Forma de Faturamento
+    forma_faturamento: str = "salario_fixo"
+    valor_diaria: float = 0.0
+    valor_por_task: float = 0.0
+    
+    # Campos antigos
     custo_swap: float = 0.0
     custo_move: float = 0.0
     custo_rebalancing: float = 0.0
     salario: float = 0.0
     bonus: float = 0.0
-    bonus_por_producao: float = 0.0  # Para mecânicos
+    bonus_por_producao: float = 0.0
     horas_extras: float = 0.0
+    
+    # Dados Bancários
+    banco: Optional[str] = None
+    agencia: Optional[str] = None
+    conta: Optional[str] = None
+    tipo_conta: Optional[str] = None
+    pix: Optional[str] = None
+    
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserLogin(BaseModel):
