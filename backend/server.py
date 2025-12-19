@@ -1278,12 +1278,15 @@ async def get_relatorio_mensal(
         pagamentos_colaboradores.append({
             "nome": colab['name'],
             "tipo": colab.get('tipo_funcionario', 'motorista'),
+            "tipo_contrato": colab.get('tipo_contrato', 'contrato'),
+            "forma_faturamento": forma_faturamento,
             "diarias_trabalhadas": diarias,
             "total_tasks": total_tasks,
             "total_manutencoes": total_manutencoes,
-            "salario_base": colab.get('salario', 0),
+            "salario_base": salario_base,
+            "valor_diarias": valor_diarias,
+            "valor_producao": valor_producao,
             "bonus": colab.get('bonus', 0),
-            "bonus_producao": total_manutencoes * colab.get('bonus_por_producao', 0) if colab.get('tipo_funcionario') == 'mecanico' else 0,
             "salario_total": salario_total
         })
     
