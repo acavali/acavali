@@ -282,6 +282,108 @@ export default function DespesasTab() {
           </Table>
         )}
       </CardContent>
+
+      {/* Seção de Pagamentos de Funcionários */}
+      <CardContent className="mt-6 border-t pt-6">
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            👥 Pagamentos de Funcionários
+          </h3>
+          <p className="text-sm text-gray-500 mt-1">
+            Relatório simples do mês {new Date(dataFiltro).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+          </p>
+        </div>
+
+        {pagamentosFuncionarios.length === 0 ? (
+          <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+            <p>Nenhum pagamento registrado para este período</p>
+          </div>
+        ) : (
+          <>
+            {/* Cards de Resumo */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+                <CardContent className="pt-6">
+                  <div className="text-sm text-blue-600 font-medium mb-1">Total de Colaboradores</div>
+                  <div className="text-3xl font-bold text-blue-700">{pagamentosFuncionarios.length}</div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+                <CardContent className="pt-6">
+                  <div className="text-sm text-green-600 font-medium mb-1">Total de Diárias</div>
+                  <div className="text-3xl font-bold text-green-700">
+                    {pagamentosFuncionarios.reduce((sum, p) => sum + p.diarias_trabalhadas, 0)}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+                <CardContent className="pt-6">
+                  <div className="text-sm text-orange-600 font-medium mb-1">Total a Pagar</div>
+                  <div className="text-3xl font-bold text-orange-700">
+                    €{pagamentosFuncionarios.reduce((sum, p) => sum + p.salario_total, 0).toFixed(2)}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Tabela Simples */}
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50">
+                  <TableHead className="font-semibold">Funcionário</TableHead>
+                  <TableHead className="font-semibold">Tipo</TableHead>
+                  <TableHead className="font-semibold text-center">Dias Trabalhados</TableHead>
+                  <TableHead className="font-semibold text-center">Tasks</TableHead>
+                  <TableHead className="font-semibold text-right">Valor a Pagar</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {pagamentosFuncionarios.map((pagamento, idx) => (
+                  <TableRow key={idx} className="hover:bg-gray-50">
+                    <TableCell className="font-medium">{pagamento.nome}</TableCell>
+                    <TableCell>
+                      <span className={`px-2 py-1 rounded-full text-xs ${
+                        pagamento.tipo === 'mecanico' 
+                          ? 'bg-purple-100 text-purple-800' 
+                          : 'bg-green-100 text-green-800'
+                      }`}>
+                        {pagamento.tipo === 'mecanico' ? '🔧 Mecânico' : '👨‍✈️ Motorista'}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <span className="inline-flex items-center justify-center bg-blue-50 text-blue-700 font-semibold px-3 py-1 rounded-full">
+                        {pagamento.diarias_trabalhadas} dias
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center text-gray-600">
+                      {pagamento.total_tasks + pagamento.total_manutencoes}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <span className="text-lg font-bold text-green-600">
+                        €{pagamento.salario_total.toFixed(2)}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                <TableRow className="bg-gray-100 font-bold">
+                  <TableCell colSpan={2} className="text-right">TOTAL GERAL:</TableCell>
+                  <TableCell className="text-center">
+                    {pagamentosFuncionarios.reduce((sum, p) => sum + p.diarias_trabalhadas, 0)} dias
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {pagamentosFuncionarios.reduce((sum, p) => sum + p.total_tasks + p.total_manutencoes, 0)}
+                  </TableCell>
+                  <TableCell className="text-right text-green-600 text-xl">
+                    €{pagamentosFuncionarios.reduce((sum, p) => sum + p.salario_total, 0).toFixed(2)}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </>
+        )}
+      </CardContent>
     </Card>
   );
 }
