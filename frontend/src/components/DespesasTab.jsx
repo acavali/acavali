@@ -25,6 +25,7 @@ export default function DespesasTab() {
   const [despesas, setDespesas] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [dataFiltro, setDataFiltro] = useState(new Date().toISOString().split('T')[0]);
+  const [pagamentosFuncionarios, setPagamentosFuncionarios] = useState([]);
   const [despesaForm, setDespesaForm] = useState({
     descricao: "",
     valor: 0,
@@ -36,6 +37,7 @@ export default function DespesasTab() {
 
   useEffect(() => {
     fetchDespesas();
+    fetchPagamentosFuncionarios();
   }, [dataFiltro]);
 
   const fetchDespesas = async () => {
