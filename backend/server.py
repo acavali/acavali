@@ -813,6 +813,28 @@ async def create_manutencao(manutencao_data: ManutencaoCreate, current_user: dic
     doc['created_at'] = doc['created_at'].isoformat()
     
     await db.manutencoes.insert_one(doc)
+    
+    # Enviar notificação WhatsApp - Manutenção de Veículo
+    alerta_km = ""
+    if km_faltante and km_faltante < 1000:
+        alerta_km = f"\n⚠️ *ALERTA: Próxima troca em apenas {km_faltante} km!*"
+    elif km_faltante:
+        alerta_km = f"\n📊 Próxima troca em: {km_faltante} km"
+    
+    message = f"""🔧 *Point Controll - Manutenção Realizada*
+
+🚙 Veículo: {veiculo['placa']} ({veiculo['modelo']})
+🛠️ Tipo: {manutencao_data.tipo}
+📝 Descrição: {manutencao_data.descricao}
+📊 KM Atual: {manutencao_data.km_atual} km
+💰 Custo: €{manutencao_data.custo:.2f}
+📅 Data: {data}{alerta_km}
+
+✅ Manutenção registrada!"""
+    
+    # Enviar para admin
+    send_whatsapp_notification(ADMIN_WHATSAPP_NUMBER, message)
+    
     return manutencao_obj
 
 @api_router.get("/manutencoes", response_model=List[Manutencao])
