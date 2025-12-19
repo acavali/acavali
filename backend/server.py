@@ -1215,17 +1215,57 @@ async def get_relatorio_mensal(
         manutencoes_colab = [m for m in manutencoes if m.get('realizado_por') == colab['id']]
         total_manutencoes = len(manutencoes_colab)
         
-        # Calcular salário
-        if colab.get('tipo_funcionario') == 'mecanico':
-            # Mecânico: salário fixo + bonificação por produção
+        # Calcular salário baseado na forma de faturamento
+        forma_faturamento = colab.get('forma_faturamento', 'salario_fixo')
+        salario_base = 0
+        valor_producao = 0
+        valor_diarias = 0
+        
+        if forma_faturamento == 'diaria':
+            # Diária: Dias Trabalhados × Valor da Diária
+            valor_diaria = colab.get('valor_diaria', 0)
+            valor_diarias = diarias * valor_diaria
+            salario_total = valor_diarias + colab.get('bonus', 0)
+            
+        elif forma_faturamento == 'salario_fixo':
+            # Salário Fixo: Valor fixo mensal
             salario_base = colab.get('salario', 0)
-            bonus_producao = total_manutencoes * colab.get('bonus_por_producao', 0)
-            salario_total = salario_base + bonus_producao + colab.get('bonus', 0)
+            salario_total = salario_base + colab.get('bonus', 0)
+            
+        elif forma_faturamento == 'producao':
+            # Produção: Quantidade de Tasks × Valor por Task
+            valor_por_task = colab.get('valor_por_task', 0)
+            if colab.get('tipo_funcionario') == 'mecanico':
+                # Mecânico: conta manutenções
+                valor_producao = total_manutencoes * valor_por_task
+            else:
+                # Motorista: conta tasks
+                valor_producao = total_tasks * valor_por_task
+            salario_total = valor_producao + colab.get('bonus', 0)
+            
+        elif forma_faturamento == 'diaria_producao':
+            # Diária + Produção: (Dias × Diária) + (Tasks × Valor)
+            valor_diaria = colab.get('valor_diaria', 0)
+            valor_por_task = colab.get('valor_por_task', 0)
+            valor_diarias = diarias * valor_diaria
+            
+            if colab.get('tipo_funcionario') == 'mecanico':
+                valor_producao = total_manutencoes * valor_por_task
+            else:
+                valor_producao = total_tasks * valor_por_task
+            
+            salario_total = valor_diarias + valor_producao + colab.get('bonus', 0)
+        
         else:
-            # Motorista: salário + custo por tarefas
-            salario_base = colab.get('salario', 0)
-            custo_tasks = sum(t['custo_total'] for t in tasks_colab)
-            salario_total = salario_base + custo_tasks + colab.get('bonus', 0)
+            # Fallback para lógica antiga (compatibilidade)
+            if colab.get('tipo_funcionario') == 'mecanico':
+                salario_base = colab.get('salario', 0)
+                bonus_producao = total_manutencoes * colab.get('bonus_por_producao', 0)
+                salario_total = salario_base + bonus_producao + colab.get('bonus', 0)
+            else:
+                salario_base = colab.get('salario', 0)
+                custo_tasks = sum(t['custo_total'] for t in tasks_colab)
+                salario_total = salario_base + custo_tasks + colab.get('bonus', 0)
         
         # Filtro de produção mínima
         if producao_min is not None:
