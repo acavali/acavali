@@ -706,6 +706,26 @@ async def update_registro_veiculo(registro_id: str, registro_data: RegistroVeicu
     registro = await db.registros_veiculos.find_one({"id": registro_id}, {"_id": 0})
     if isinstance(registro['created_at'], str):
         registro['created_at'] = datetime.fromisoformat(registro['created_at'])
+    
+    # Enviar notificação WhatsApp - Fim do Turno (quando km_final é registrado)
+    if registro_data.km_final and motorista.get('tipo_funcionario') == 'motorista':
+        now = datetime.now(timezone.utc)
+        message = f"""🏁 *Point Controll - Fim de Turno*
+
+👤 Motorista: {motorista['name']}
+🚙 Veículo: {veiculo['placa']} ({veiculo['modelo']})
+📊 KM Inicial: {registro_data.km_inicial} km
+📊 KM Final: {registro_data.km_final} km
+🛣️ KM Rodado: {km_rodado} km
+⛽ Litros: {litros_diesel:.2f} L
+💰 Custo: €{custo_diesel:.2f}
+🕐 Horário: {now.strftime('%H:%M')}
+
+✅ Turno finalizado com sucesso!"""
+        
+        # Enviar para admin
+        send_whatsapp_notification(ADMIN_WHATSAPP_NUMBER, message)
+    
     return RegistroVeiculo(**registro)
 
 @api_router.delete("/registros-veiculos/{registro_id}")
