@@ -101,3 +101,61 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Sistema multi-idioma com Italiano como padrão. Testar se a troca de idiomas funciona corretamente na página de login e no Admin Dashboard."
+
+frontend:
+  - task: "Multi-language system with i18next"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/i18n/config.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Implemented i18n with react-i18next. Italian is default language. Added LanguageSelector component to Login and AdminDashboard pages. Updated translation files for IT, PT, EN."
+
+  - task: "Login page with translations"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/Login.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Added useTranslation hook and translated all text to use i18n keys. LanguageSelector added to top-right corner."
+
+  - task: "AdminDashboard with translations"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/AdminDashboard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Added useTranslation hook and translated header, cards, and tabs to use i18n keys."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: true
+
+test_plan:
+  current_focus:
+    - "Multi-language system with i18next"
+    - "Login page with translations"
+    - "AdminDashboard with translations"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "main"
+    - message: "Implemented multi-language feature with react-i18next. Italian is the default language. Please test: 1) Login page shows in Italian by default 2) Language selector works and changes the UI text 3) AdminDashboard shows translated text in Italian. Credentials: email=andrecavali@gmail.com, password=Fe@012022"
