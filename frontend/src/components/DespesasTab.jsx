@@ -53,6 +53,27 @@ export default function DespesasTab() {
     }
   };
 
+  const fetchPagamentosFuncionarios = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const data = new Date(dataFiltro);
+      const mes = String(data.getMonth() + 1).padStart(2, '0');
+      const ano = data.getFullYear();
+      
+      // Buscar relatório mensal simplificado
+      const response = await axios.get(`${API}/relatorios/mensal?mes=${mes}&ano=${ano}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data && response.data.pagamentos_colaboradores) {
+        setPagamentosFuncionarios(response.data.pagamentos_colaboradores);
+      }
+    } catch (error) {
+      console.error(error);
+      // Não mostrar erro se não houver dados
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
