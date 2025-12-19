@@ -447,33 +447,59 @@ export default function RelatorioMensalTab() {
                       <TableRow>
                         <TableHead>Nome</TableHead>
                         <TableHead>Tipo</TableHead>
+                        <TableHead>Forma Fat.</TableHead>
+                        <TableHead>Contrato</TableHead>
                         <TableHead>Diárias</TableHead>
                         <TableHead>Tasks</TableHead>
-                        <TableHead>Manutenções</TableHead>
-                        <TableHead>Salário Base</TableHead>
+                        <TableHead>Val. Diárias</TableHead>
+                        <TableHead>Val. Produção</TableHead>
                         <TableHead>Bônus</TableHead>
                         <TableHead className="text-right">Total</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {relatorio.pagamentos_colaboradores.map((colab, idx) => (
-                        <TableRow key={idx}>
-                          <TableCell className="font-medium">{colab.nome}</TableCell>
-                          <TableCell>
-                            <span className={`px-2 py-1 rounded-full text-xs ${colab.tipo === 'mecanico' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}`}>
-                              {colab.tipo === 'mecanico' ? '🔧 Mecânico' : '👨‍✈️ Motorista'}
-                            </span>
-                          </TableCell>
-                          <TableCell>{colab.diarias_trabalhadas}</TableCell>
-                          <TableCell>{colab.total_tasks}</TableCell>
-                          <TableCell>{colab.total_manutencoes}</TableCell>
-                          <TableCell>€{colab.salario_base.toFixed(2)}</TableCell>
-                          <TableCell>€{(colab.bonus + colab.bonus_producao).toFixed(2)}</TableCell>
-                          <TableCell className="text-right font-bold text-green-600">
-                            €{colab.salario_total.toFixed(2)}
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      {relatorio.pagamentos_colaboradores.map((colab, idx) => {
+                        const formaLabels = {
+                          'diaria': '📅 Diária',
+                          'salario_fixo': '💰 Fixo',
+                          'producao': '📊 Produção',
+                          'diaria_producao': '📅+📊'
+                        };
+                        const contratoLabels = {
+                          'contrato': '📄',
+                          'partida_iva': '🏢',
+                          'parttime': '⏰'
+                        };
+                        
+                        return (
+                          <TableRow key={idx}>
+                            <TableCell className="font-medium">{colab.nome}</TableCell>
+                            <TableCell>
+                              <span className={`px-2 py-1 rounded-full text-xs ${colab.tipo === 'mecanico' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}`}>
+                                {colab.tipo === 'mecanico' ? '🔧 Mecânico' : '👨‍✈️ Motorista'}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-xs">
+                                {formaLabels[colab.forma_faturamento] || colab.forma_faturamento}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-xs">
+                                {contratoLabels[colab.tipo_contrato] || colab.tipo_contrato}
+                              </span>
+                            </TableCell>
+                            <TableCell>{colab.diarias_trabalhadas}</TableCell>
+                            <TableCell>{colab.total_tasks + colab.total_manutencoes}</TableCell>
+                            <TableCell className="text-blue-600">€{colab.valor_diarias?.toFixed(2) || '0.00'}</TableCell>
+                            <TableCell className="text-purple-600">€{colab.valor_producao?.toFixed(2) || '0.00'}</TableCell>
+                            <TableCell>€{colab.bonus.toFixed(2)}</TableCell>
+                            <TableCell className="text-right font-bold text-green-600">
+                              €{colab.salario_total.toFixed(2)}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                     </TableBody>
                   </Table>
                 </CardContent>
