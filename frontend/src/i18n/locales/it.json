@@ -1,4 +1,10 @@
 {
+  "login": {
+    "title": "Sistema di Produzione",
+    "subtitle": "Gestione Biciclette Elettriche - Milano, Italia",
+    "emailPlaceholder": "tua@email.com",
+    "loading": "Accesso..."
+  },
   "common": {
     "welcome": "Benvenuto",
     "login": "Accedi",

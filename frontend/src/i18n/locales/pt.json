@@ -1,4 +1,10 @@
 {
+  "login": {
+    "title": "Sistema de Produção",
+    "subtitle": "Controle de Bicicletas Elétricas - Milão, Itália",
+    "emailPlaceholder": "seu@email.com",
+    "loading": "Entrando..."
+  },
   "common": {
     "welcome": "Bem-vindo",
     "login": "Entrar",

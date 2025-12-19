@@ -1,4 +1,10 @@
 {
+  "login": {
+    "title": "Production System",
+    "subtitle": "Electric Bicycle Management - Milan, Italy",
+    "emailPlaceholder": "your@email.com",
+    "loading": "Logging in..."
+  },
   "common": {
     "welcome": "Welcome",
     "login": "Login",
