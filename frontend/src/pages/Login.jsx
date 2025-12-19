@@ -88,10 +88,10 @@ export default function Login({ onLogin }) {
       }
 
       onLogin(user, token);
-      toast.success("Login realizado com sucesso!");
+      toast.success(t('messages.loginSuccess'));
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.detail || "Erro ao fazer login");
+      toast.error(error.response?.data?.detail || t('messages.errorOccurred'));
     } finally {
       setLoading(false);
     }
@@ -101,23 +101,28 @@ export default function Login({ onLogin }) {
     <div className="min-h-screen flex items-center justify-center p-4" style={{
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
     }}>
+      {/* Language Selector in top-right corner */}
+      <div className="absolute top-4 right-4">
+        <LanguageSelector />
+      </div>
+      
       <Card className="w-full max-w-md shadow-2xl" data-testid="login-card">
         <CardHeader>
           <div>
-            <CardTitle className="text-3xl font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Sistema de Produção</CardTitle>
-            <CardDescription className="text-base">Controle de Bicicletas Elétricas - Milão, Itália</CardDescription>
+            <CardTitle className="text-3xl font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{t('login.title')}</CardTitle>
+            <CardDescription className="text-base">{t('login.subtitle')}</CardDescription>
           </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('common.email')}</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="seu@email.com"
+                  placeholder={t('login.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -127,7 +132,7 @@ export default function Login({ onLogin }) {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password">{t('common.password')}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                 <Input
@@ -148,7 +153,7 @@ export default function Login({ onLogin }) {
               disabled={loading}
               data-testid="login-button"
             >
-              {loading ? "Entrando..." : "Entrar"}
+              {loading ? t('login.loading') : t('common.login')}
             </Button>
           </form>
         </CardContent>
