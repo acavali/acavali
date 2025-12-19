@@ -219,6 +219,37 @@ export default function ColaboradoresTab() {
                 </div>
               </div>
 
+              {/* Informações Pessoais */}
+              <div className="border-t pt-4">
+                <Label className="text-base font-semibold mb-3 block">📋 Informações Pessoais</Label>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label>CPF</Label>
+                    <Input
+                      value={formData.cpf}
+                      onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+                      placeholder="000.000.000-00"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Telefone</Label>
+                    <Input
+                      value={formData.telefone}
+                      onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                      placeholder="+39 000 0000000"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Endereço</Label>
+                    <Input
+                      value={formData.endereco}
+                      onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
+                      placeholder="Via Roma, 123"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Senha {editingUser && "(deixe vazio para não alterar)"}</Label>
