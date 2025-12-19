@@ -6,6 +6,7 @@ import AdminDashboard from "@/pages/AdminDashboard";
 import ColaboradorDashboard from "@/pages/ColaboradorDashboard";
 import { Toaster } from "@/components/ui/sonner";
 import InstallPWA from "@/components/InstallPWA";
+import '@/i18n/config'; // Inicializar i18n
 
 function App() {
   const [user, setUser] = useState(null);
