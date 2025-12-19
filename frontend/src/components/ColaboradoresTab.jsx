@@ -480,6 +480,57 @@ export default function ColaboradoresTab() {
                 </div>
               )}
 
+              {/* Dados Bancários */}
+              <div className="border-t pt-4">
+                <Label className="text-base font-semibold mb-3 block">🏦 Dados Bancários (Opcional)</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Banco</Label>
+                    <Input
+                      value={formData.banco}
+                      onChange={(e) => setFormData({ ...formData, banco: e.target.value })}
+                      placeholder="Ex: Intesa Sanpaolo"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Agência</Label>
+                    <Input
+                      value={formData.agencia}
+                      onChange={(e) => setFormData({ ...formData, agencia: e.target.value })}
+                      placeholder="Ex: 1234"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Conta</Label>
+                    <Input
+                      value={formData.conta}
+                      onChange={(e) => setFormData({ ...formData, conta: e.target.value })}
+                      placeholder="Ex: 567890"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Tipo de Conta</Label>
+                    <Select value={formData.tipo_conta} onValueChange={(val) => setFormData({ ...formData, tipo_conta: val })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione..." />
+                      </SelectTrigger>
+                      <SelectContent className="z-[9999]">
+                        <SelectItem value="corrente">Corrente</SelectItem>
+                        <SelectItem value="poupanca">Poupança</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Chave PIX</Label>
+                    <Input
+                      value={formData.pix}
+                      onChange={(e) => setFormData({ ...formData, pix: e.target.value })}
+                      placeholder="CPF, email, telefone ou chave aleatória"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <DialogFooter>
                 <Button type="submit" data-testid="save-colaborador-button">
                   {editingUser ? "Atualizar" : "Criar"} Colaborador
