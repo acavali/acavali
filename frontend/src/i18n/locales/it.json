@@ -3,7 +3,11 @@
     "title": "Sistema di Produzione",
     "subtitle": "Gestione Biciclette Elettriche - Milano, Italia",
     "emailPlaceholder": "tua@email.com",
-    "loading": "Accesso..."
+    "phonePlaceholder": "+39 XXX XXX XXXX",
+    "loading": "Accesso...",
+    "withEmail": "Email",
+    "withPhone": "Telefono",
+    "phone": "Telefono"
   },
   "common": {
     "welcome": "Benvenuto",

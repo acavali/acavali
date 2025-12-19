@@ -3,7 +3,11 @@
     "title": "Sistema de Produção",
     "subtitle": "Controle de Bicicletas Elétricas - Milão, Itália",
     "emailPlaceholder": "seu@email.com",
-    "loading": "Entrando..."
+    "phonePlaceholder": "+39 XXX XXX XXXX",
+    "loading": "Entrando...",
+    "withEmail": "Email",
+    "withPhone": "Telefone",
+    "phone": "Telefone"
   },
   "common": {
     "welcome": "Bem-vindo",
