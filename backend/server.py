@@ -345,9 +345,12 @@ async def login(credentials: UserLogin):
         # Buscar todos usuários e comparar telefone normalizado
         all_users = await db.users.find({}, {"_id": 0}).to_list(1000)
         for u in all_users:
-            if u.get('telefone') and normalize_phone(u['telefone']) == phone_normalized:
-                user = u
-                break
+            if u.get('telefone'):
+                db_phone = normalize_phone(u['telefone'])
+                # Comparar exato ou se termina com os dígitos digitados (para ignorar código do país)
+                if db_phone == phone_normalized or db_phone.endswith(phone_normalized) or phone_normalized.endswith(db_phone):
+                    user = u
+                    break
     else:
         raise HTTPException(status_code=400, detail="Email ou telefone é obrigatório")
     
