@@ -79,8 +79,8 @@ export default function AdminDashboard({ user, onLogout }) {
       <header className="bg-white border-b border-gray-200 shadow-sm">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800" style={{ fontFamily: 'Space Grotesk, sans-serif' }} data-testid="admin-header">Dashboard Admin</h1>
-            <p className="text-sm text-gray-500">Bem-vindo, {user.name}</p>
+            <h1 className="text-2xl font-bold text-gray-800" style={{ fontFamily: 'Space Grotesk, sans-serif' }} data-testid="admin-header">{t('dashboard.title')} Admin</h1>
+            <p className="text-sm text-gray-500">{t('common.welcome')}, {user.name}</p>
           </div>
           <div className="flex items-center gap-4">
             <LanguageSelector />
@@ -91,7 +91,7 @@ export default function AdminDashboard({ user, onLogout }) {
               data-testid="logout-button"
             >
               <LogOut className="w-4 h-4" />
-              Sair
+              {t('common.logout')}
             </Button>
           </div>
         </div>
@@ -103,45 +103,45 @@ export default function AdminDashboard({ user, onLogout }) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Colaboradores</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('dashboard.collaborators')}</CardTitle>
               <Users className="h-5 w-5 opacity-80" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold" data-testid="total-colaboradores">{stats.colaboradores}</div>
-              <p className="text-xs opacity-80 mt-1">Total de colaboradores</p>
+              <p className="text-xs opacity-80 mt-1">{t('collaborators.title')}</p>
             </CardContent>
           </Card>
 
           <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Tasks Hoje</CardTitle>
+              <CardTitle className="text-sm font-medium">Tasks {t('dashboard.dailyProduction').split(' ')[0]}</CardTitle>
               <BarChart3 className="h-5 w-5 opacity-80" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold" data-testid="tasks-hoje">{stats.tasks_hoje}</div>
-              <p className="text-xs opacity-80 mt-1">Total de tarefas</p>
+              <p className="text-xs opacity-80 mt-1">{t('production.totalTasks')}</p>
             </CardContent>
           </Card>
 
           <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Custo Tasks</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('tasks.cost')} Tasks</CardTitle>
               <Calendar className="h-5 w-5 opacity-80" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold" data-testid="custo-hoje">€{stats.custo_hoje.toFixed(2)}</div>
-              <p className="text-xs opacity-80 mt-1">Custo produção</p>
+              <p className="text-xs opacity-80 mt-1">{t('dashboard.production')}</p>
             </CardContent>
           </Card>
 
           <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Despesas</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('dashboard.expenses')}</CardTitle>
               <Receipt className="h-5 w-5 opacity-80" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold" data-testid="despesas-hoje">€{stats.despesas_hoje.toFixed(2)}</div>
-              <p className="text-xs opacity-80 mt-1">Outras despesas</p>
+              <p className="text-xs opacity-80 mt-1">{t('expenses.title')}</p>
             </CardContent>
           </Card>
         </div>
@@ -149,11 +149,11 @@ export default function AdminDashboard({ user, onLogout }) {
         {/* Tabs */}
         <Tabs defaultValue="producao" className="space-y-6">
           <TabsList className="grid w-full grid-cols-5 max-w-4xl mx-auto">
-            <TabsTrigger value="producao" data-testid="tab-producao">Produção</TabsTrigger>
-            <TabsTrigger value="colaboradores" data-testid="tab-colaboradores">Colaboradores</TabsTrigger>
-            <TabsTrigger value="veiculos" data-testid="tab-veiculos">Veículos</TabsTrigger>
-            <TabsTrigger value="despesas" data-testid="tab-despesas">Despesas</TabsTrigger>
-            <TabsTrigger value="relatorios" data-testid="tab-relatorios">Relatórios</TabsTrigger>
+            <TabsTrigger value="producao" data-testid="tab-producao">{t('dashboard.production')}</TabsTrigger>
+            <TabsTrigger value="colaboradores" data-testid="tab-colaboradores">{t('dashboard.collaborators')}</TabsTrigger>
+            <TabsTrigger value="veiculos" data-testid="tab-veiculos">{t('dashboard.vehicles')}</TabsTrigger>
+            <TabsTrigger value="despesas" data-testid="tab-despesas">{t('dashboard.expenses')}</TabsTrigger>
+            <TabsTrigger value="relatorios" data-testid="tab-relatorios">{t('dashboard.reports')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="producao">
@@ -175,8 +175,8 @@ export default function AdminDashboard({ user, onLogout }) {
           <TabsContent value="relatorios">
             <Tabs defaultValue="avancado" className="space-y-4">
               <TabsList className="grid w-full max-w-md grid-cols-2">
-                <TabsTrigger value="avancado">Relatórios Avançados</TabsTrigger>
-                <TabsTrigger value="mensal">Fechamento Mensal</TabsTrigger>
+                <TabsTrigger value="avancado">{t('reports.advanced')}</TabsTrigger>
+                <TabsTrigger value="mensal">{t('reports.monthly')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="avancado">
