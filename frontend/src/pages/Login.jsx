@@ -219,6 +219,23 @@ export default function Login({ onLogin }) {
             >
               {loading ? t('login.loading') : t('common.login')}
             </Button>
+            
+            {/* Botão de Setup Inicial */}
+            <div className="pt-4 border-t border-gray-200">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full flex items-center justify-center gap-2 text-gray-600 hover:text-purple-600"
+                onClick={handleSetupUsuarios}
+                disabled={setupLoading}
+              >
+                <Settings className="w-4 h-4" />
+                {setupLoading ? "Criando usuários..." : "🔧 Setup Inicial - Criar Usuários"}
+              </Button>
+              <p className="text-xs text-gray-400 text-center mt-2">
+                Clique apenas uma vez após o primeiro deploy
+              </p>
+            </div>
           </form>
         </CardContent>
       </Card>
