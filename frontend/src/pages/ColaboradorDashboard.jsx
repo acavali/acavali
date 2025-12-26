@@ -202,7 +202,11 @@ export default function ColaboradorDashboard({ user, onLogout }) {
           km_final: parseFloat(fecharForm.km_final),
           litros_diesel: parseFloat(fecharForm.litros_diesel),
           custo_diesel: 0, // Will be calculated by backend based on vehicle cost per liter
-          data: turnoAtivo.data
+          data: turnoAtivo.data,
+          baterias_nineboot_carregadas: turnoAtivo.baterias_nineboot_carregadas || 0,
+          baterias_okay_carregadas: turnoAtivo.baterias_okay_carregadas || 0,
+          baterias_nineboot_descarregadas: parseInt(fecharForm.baterias_nineboot_descarregadas) || 0,
+          baterias_okay_descarregadas: parseInt(fecharForm.baterias_okay_descarregadas) || 0
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
