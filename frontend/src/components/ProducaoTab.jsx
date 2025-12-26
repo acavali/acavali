@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Calendar, Battery, Move, RefreshCw, Wrench, BarChart3, TrendingUp } from "lucide-react";
+import { Calendar, Battery, Move, RefreshCw, Wrench, BarChart3, TrendingUp, CalendarDays } from "lucide-react";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -39,13 +40,24 @@ const valoresContrato = {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 export default function ProducaoTab() {
+  const [viewMode, setViewMode] = useState("diario"); // "diario" ou "mensal"
   const [data, setData] = useState(new Date().toISOString().split('T')[0]);
+  const [mesAtual, setMesAtual] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
   const [tasks, setTasks] = useState([]);
+  const [tasksmensal, setTasksMensal] = useState([]);
   const [chartData, setChartData] = useState([]);
+  const [chartDataMensal, setChartDataMensal] = useState([]);
+  const [dailyChartData, setDailyChartData] = useState([]);
 
   useEffect(() => {
     fetchTasks();
   }, [data]);
+
+  useEffect(() => {
+    if (viewMode === "mensal") {
+      fetchTasksMensal();
+    }
+  }, [mesAtual, viewMode]);
 
   const fetchTasks = async () => {
     try {
