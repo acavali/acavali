@@ -248,10 +248,10 @@ export default function Login({ onLogin }) {
                 disabled={setupLoading}
               >
                 <Settings className="w-4 h-4" />
-                {setupLoading ? "Criando usuários..." : "🔧 Setup Inicial - Criar Usuários"}
+                {setupLoading ? "Criando dados..." : "🔧 Setup Inicial - Criar Dados"}
               </Button>
               <p className="text-xs text-gray-400 text-center mt-2">
-                Clique apenas uma vez após o primeiro deploy
+                Cria usuários e veículos. Clique apenas uma vez após o deploy.
               </p>
             </div>
           </form>
