@@ -46,13 +46,17 @@ export default function ColaboradorDashboard({ user, onLogout }) {
   // Iniciar turno form
   const [iniciarForm, setIniciarForm] = useState({
     veiculo_id: "",
-    km_inicial: 0
+    km_inicial: 0,
+    baterias_nineboot_carregadas: 0,
+    baterias_okay_carregadas: 0
   });
 
   // Fechar turno form
   const [fecharForm, setFecharForm] = useState({
     km_final: 0,
-    litros_diesel: 0
+    litros_diesel: 0,
+    baterias_nineboot_descarregadas: 0,
+    baterias_okay_descarregadas: 0
   });
 
   // Calculate automatic liters based on km_final
