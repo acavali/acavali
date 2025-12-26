@@ -620,38 +620,35 @@ async def setup_usuarios_iniciais():
     ]
     
     for user_data in usuarios_para_criar:
-        # Verificar se já existe (por email ou telefone)
-        existing = await db.users.find_one({
-            "$or": [
-                {"email": user_data["email"]},
-                {"telefone": user_data["telefone"]}
-            ]
-        })
+        # Verificar se já existe (por email)
+        existing = await db.users.find_one({"email": user_data["email"]})
         
         if existing:
             usuarios_existentes.append(user_data["name"])
             continue
         
-        # Criar usuário
+        # Criar usuário com campos padrão
         user_data["id"] = str(uuid.uuid4())
         user_data["created_at"] = datetime.now(timezone.utc).isoformat()
-        user_data["turno"] = None
-        user_data["cpf"] = None
-        user_data["endereco"] = None
-        user_data["valor_diaria"] = 0.0
-        user_data["valor_por_task"] = 0.0
-        user_data["custo_swap"] = 0.0
-        user_data["custo_move"] = 0.0
-        user_data["custo_rebalancing"] = 0.0
-        user_data["salario"] = 0.0
-        user_data["bonus"] = 0.0
-        user_data["bonus_por_producao"] = 0.0
-        user_data["horas_extras"] = 0.0
-        user_data["banco"] = None
-        user_data["agencia"] = None
-        user_data["conta"] = None
-        user_data["tipo_conta"] = None
-        user_data["pix"] = None
+        
+        # Definir valores padrão se não existirem
+        user_data.setdefault("turno", "dia")
+        user_data.setdefault("cpf", None)
+        user_data.setdefault("endereco", None)
+        user_data.setdefault("valor_diaria", 0.0)
+        user_data.setdefault("valor_por_task", 0.0)
+        user_data.setdefault("custo_swap", 0.0)
+        user_data.setdefault("custo_move", 0.0)
+        user_data.setdefault("custo_rebalancing", 0.0)
+        user_data.setdefault("salario", 0.0)
+        user_data.setdefault("bonus", 0.0)
+        user_data.setdefault("bonus_por_producao", 0.0)
+        user_data.setdefault("horas_extras", 0.0)
+        user_data.setdefault("banco", None)
+        user_data.setdefault("agencia", None)
+        user_data.setdefault("conta", None)
+        user_data.setdefault("tipo_conta", None)
+        user_data.setdefault("pix", None)
         
         await db.users.insert_one(user_data)
         usuarios_criados.append(user_data["name"])
