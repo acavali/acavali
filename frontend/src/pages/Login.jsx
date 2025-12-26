@@ -25,19 +25,22 @@ export default function Login({ onLogin }) {
   const handleSetupUsuarios = async () => {
     setSetupLoading(true);
     try {
-      const response = await axios.post(`${API}/setup/usuarios`);
+      const response = await axios.post(`${API}/setup/completo`);
       const data = response.data;
       
-      if (data.total_criados > 0) {
-        toast.success(`✅ ${data.total_criados} usuários criados com sucesso!`);
-      } else if (data.total_existentes > 0) {
-        toast.info(`ℹ️ Usuários já existem no sistema (${data.total_existentes})`);
+      const totalUsuarios = data.usuarios.total_criados;
+      const totalVeiculos = data.veiculos.total_criados;
+      
+      if (totalUsuarios > 0 || totalVeiculos > 0) {
+        toast.success(`✅ Setup concluído! ${totalUsuarios} usuários e ${totalVeiculos} veículos criados!`);
+      } else {
+        toast.info(`ℹ️ Dados já existem no sistema`);
       }
       
       console.log("Setup response:", data);
     } catch (error) {
       console.error("Setup error:", error);
-      toast.error("Erro ao criar usuários: " + (error.response?.data?.detail || error.message));
+      toast.error("Erro ao criar dados: " + (error.response?.data?.detail || error.message));
     } finally {
       setSetupLoading(false);
     }
