@@ -216,9 +216,13 @@ class RegistroVeiculoCreate(BaseModel):
     litros_diesel: Optional[float] = 0.0
     custo_diesel: Optional[float] = 0.0
     data: Optional[str] = None
-    # Baterias
+    # Baterias início do turno
     baterias_nineboot_carregadas: Optional[int] = 0
     baterias_okay_carregadas: Optional[int] = 0
+    # Baterias fim do turno - devolvidas carregadas (não usadas)
+    baterias_nineboot_devolvidas_carregadas: Optional[int] = 0
+    baterias_okay_devolvidas_carregadas: Optional[int] = 0
+    # Baterias fim do turno - devolvidas descarregadas (usadas)
     baterias_nineboot_descarregadas: Optional[int] = 0
     baterias_okay_descarregadas: Optional[int] = 0
 
@@ -238,9 +242,13 @@ class RegistroVeiculo(BaseModel):
     custo_diesel: float = 0.0
     km_por_litro: Optional[float] = 0.0
     data: str
-    # Baterias
+    # Baterias início do turno
     baterias_nineboot_carregadas: Optional[int] = 0
     baterias_okay_carregadas: Optional[int] = 0
+    # Baterias fim do turno - devolvidas carregadas (não usadas)
+    baterias_nineboot_devolvidas_carregadas: Optional[int] = 0
+    baterias_okay_devolvidas_carregadas: Optional[int] = 0
+    # Baterias fim do turno - devolvidas descarregadas (usadas)
     baterias_nineboot_descarregadas: Optional[int] = 0
     baterias_okay_descarregadas: Optional[int] = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
