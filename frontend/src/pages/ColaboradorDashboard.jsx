@@ -55,6 +55,10 @@ export default function ColaboradorDashboard({ user, onLogout }) {
   const [fecharForm, setFecharForm] = useState({
     km_final: 0,
     litros_diesel: 0,
+    // Baterias devolvidas carregadas (não usadas)
+    baterias_nineboot_devolvidas_carregadas: 0,
+    baterias_okay_devolvidas_carregadas: 0,
+    // Baterias devolvidas descarregadas (usadas)
     baterias_nineboot_descarregadas: 0,
     baterias_okay_descarregadas: 0
   });
