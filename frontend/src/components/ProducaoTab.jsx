@@ -530,6 +530,202 @@ export default function ProducaoTab() {
           )}
         </CardContent>
       </Card>
+        </TabsContent>
+
+        {/* TAB MENSAL */}
+        <TabsContent value="mensal">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <CalendarDays className="w-5 h-5" />
+                    Produção Mensal - {getMonthName(mesAtual)}
+                  </CardTitle>
+                  <CardDescription>Visualize a produção consolidada do mês</CardDescription>
+                </div>
+                <div className="w-48">
+                  <Label>Mês</Label>
+                  <Input
+                    type="month"
+                    value={mesAtual}
+                    onChange={(e) => setMesAtual(e.target.value)}
+                  />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {tasksmensal.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  <p>Nenhuma produção registrada para este mês</p>
+                </div>
+              ) : (
+                <>
+                  {/* Summary Cards - Mensal */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Total Tasks (Mês)</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-3xl font-bold">{totalTasksMensal}</div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Faturamento Bruto</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-3xl font-bold">€{totalFaturamentoMensal.toFixed(2)}</div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Despesa Total</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-3xl font-bold">€{totalCustoMensal.toFixed(2)}</div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className={`bg-gradient-to-br ${lucroBrutoMensal >= 0 ? 'from-emerald-500 to-emerald-600' : 'from-red-500 to-red-600'} text-white`}>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Lucro Bruto</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-3xl font-bold">€{lucroBrutoMensal.toFixed(2)}</div>
+                        <p className="text-xs opacity-80">Margem: {margemLucroMensal.toFixed(1)}%</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Gráficos Mensais */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    {/* Gráfico de Evolução Diária */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-sm flex items-center gap-2">
+                          <TrendingUp className="w-4 h-4" />
+                          Evolução Diária do Mês
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <ResponsiveContainer width="100%" height={300}>
+                          <LineChart data={dailyChartData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="dia" />
+                            <YAxis />
+                            <Tooltip 
+                              formatter={(value, name) => {
+                                if (name === 'faturamento' || name === 'custo') return `€${value.toFixed(2)}`;
+                                return value;
+                              }}
+                            />
+                            <Legend />
+                            <Line type="monotone" dataKey="quantidade" name="Tasks" stroke="#3b82f6" strokeWidth={2} />
+                            <Line type="monotone" dataKey="faturamento" name="Faturamento" stroke="#22c55e" strokeWidth={2} />
+                            <Line type="monotone" dataKey="custo" name="Despesa" stroke="#f97316" strokeWidth={2} />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </CardContent>
+                    </Card>
+
+                    {/* Gráfico de Barras por Tipo */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-sm flex items-center gap-2">
+                          <BarChart3 className="w-4 h-4" />
+                          Tasks por Tipo (Mês)
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <ResponsiveContainer width="100%" height={300}>
+                          <BarChart data={chartDataMensal}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="tipo" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            <Bar dataKey="quantidade" name="Quantidade" fill="#3b82f6" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Faturamento vs Despesa por Tipo */}
+                  <Card className="mb-6">
+                    <CardHeader>
+                      <CardTitle className="text-sm">Faturamento vs Despesa por Tipo (Mês)</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                        {chartDataMensal.map((item, index) => {
+                          const lucroItem = item.faturamento - item.custo;
+                          const margemItem = item.faturamento > 0 ? (lucroItem / item.faturamento) * 100 : 0;
+                          return (
+                            <div key={item.tipo} className="p-4 rounded-lg bg-gray-50 border">
+                              <div className="flex items-center gap-2 mb-2">
+                                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
+                                <span className="font-semibold text-sm">{item.tipo}</span>
+                              </div>
+                              <p className="text-2xl font-bold text-gray-800">{item.quantidade}</p>
+                              <div className="mt-2 text-xs space-y-1">
+                                <p className="flex justify-between">
+                                  <span className="text-gray-600">Faturamento:</span>
+                                  <span className="font-semibold text-green-600">€{item.faturamento.toFixed(2)}</span>
+                                </p>
+                                <p className="flex justify-between">
+                                  <span className="text-gray-600">Despesa:</span>
+                                  <span className="font-semibold text-orange-600">€{item.custo.toFixed(2)}</span>
+                                </p>
+                                <p className="flex justify-between border-t pt-1">
+                                  <span className="text-gray-700 font-medium">Lucro:</span>
+                                  <span className={`font-bold ${lucroItem >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                                    €{lucroItem.toFixed(2)}
+                                  </span>
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Colaboradores List - Mensal */}
+                  <div className="space-y-6">
+                    <h3 className="text-lg font-semibold">Resumo por Colaborador (Mês)</h3>
+                    {colaboradoresListMensal.sort((a, b) => b.total_quantidade - a.total_quantidade).map((colab) => (
+                      <Card key={colab.nome} className="border-l-4 border-l-purple-500">
+                        <CardHeader className="pb-3">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <CardTitle className="text-lg">{colab.nome}</CardTitle>
+                              <p className="text-sm text-gray-500">Turno: <span className="capitalize font-semibold">{colab.turno}</span></p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm text-gray-500">Total Tasks (Mês)</p>
+                              <p className="text-2xl font-bold text-purple-600">{colab.total_quantidade}</p>
+                              <div className="mt-2 space-y-1">
+                                <p className="text-xs text-gray-500">Faturamento: <span className="text-green-600 font-semibold">€{colab.total_faturamento.toFixed(2)}</span></p>
+                                <p className="text-xs text-gray-500">Despesa: <span className="text-orange-600 font-semibold">€{colab.total_custo.toFixed(2)}</span></p>
+                                <p className="text-xs text-gray-700">Lucro: <span className="text-emerald-600 font-bold">€{(colab.total_faturamento - colab.total_custo).toFixed(2)}</span></p>
+                              </div>
+                            </div>
+                          </div>
+                        </CardHeader>
+                      </Card>
+                    ))}
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
