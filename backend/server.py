@@ -892,13 +892,23 @@ async def create_registro_veiculo(registro_data: RegistroVeiculoCreate, current_
     # Enviar notificação WhatsApp - Início do Turno
     if motorista.get('tipo_funcionario') == 'motorista':
         now = datetime.now(timezone.utc)
+        # Montar informações de baterias
+        baterias_info = ""
+        total_baterias = (registro_data.baterias_nineboot_carregadas or 0) + (registro_data.baterias_okay_carregadas or 0)
+        if total_baterias > 0:
+            baterias_info = f"""
+🔋 *Baterias Carregadas:*
+   • NineBoot: {registro_data.baterias_nineboot_carregadas or 0}
+   • Okay: {registro_data.baterias_okay_carregadas or 0}
+   • Total: {total_baterias}"""
+        
         message = f"""🚗 *Point Controll - Início de Turno*
 
 👤 Motorista: {motorista['name']}
 🚙 Veículo: {veiculo['placa']} ({veiculo['modelo']})
 📊 KM Inicial: {registro_data.km_inicial} km
 📅 Data: {data}
-🕐 Horário: {now.strftime('%H:%M')}
+🕐 Horário: {now.strftime('%H:%M')}{baterias_info}
 
 ✅ Turno iniciado com sucesso!"""
         
