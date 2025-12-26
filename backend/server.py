@@ -410,14 +410,14 @@ async def login(credentials: UserLogin):
 @api_router.post("/setup/usuarios")
 async def setup_usuarios_iniciais():
     """
-    Endpoint para criar usuários iniciais (sócios e gestores).
+    Endpoint para criar usuários iniciais (sócios, gestores e colaboradores).
     Chamar apenas uma vez após o deploy.
     """
     usuarios_criados = []
     usuarios_existentes = []
     
     usuarios_para_criar = [
-        # Admin/Sócio principal
+        # ========== ADMINS/SÓCIOS ==========
         {
             "name": "Andre Cavali",
             "email": "andrecavali@gmail.com",
@@ -426,9 +426,9 @@ async def setup_usuarios_iniciais():
             "role": "admin",
             "tipo_funcionario": "socio",
             "tipo_contrato": "contrato",
-            "forma_faturamento": "salario_fixo"
+            "forma_faturamento": "salario_fixo",
+            "turno": "dia"
         },
-        # Sócios
         {
             "name": "Osvair Colloni",
             "email": "osvair.colloni@pointcontroll.com",
@@ -437,7 +437,8 @@ async def setup_usuarios_iniciais():
             "role": "admin",
             "tipo_funcionario": "socio",
             "tipo_contrato": "contrato",
-            "forma_faturamento": "salario_fixo"
+            "forma_faturamento": "salario_fixo",
+            "turno": "dia"
         },
         {
             "name": "Robsom Carboni",
@@ -447,9 +448,10 @@ async def setup_usuarios_iniciais():
             "role": "admin",
             "tipo_funcionario": "socio",
             "tipo_contrato": "contrato",
-            "forma_faturamento": "salario_fixo"
+            "forma_faturamento": "salario_fixo",
+            "turno": "dia"
         },
-        # Gestores
+        # ========== GESTORES ==========
         {
             "name": "Sergio Marciano",
             "email": "sergio.marciano@pointcontroll.com",
@@ -458,7 +460,8 @@ async def setup_usuarios_iniciais():
             "role": "admin",
             "tipo_funcionario": "gestor",
             "tipo_contrato": "contrato",
-            "forma_faturamento": "salario_fixo"
+            "forma_faturamento": "salario_fixo",
+            "turno": "dia"
         },
         {
             "name": "Izabel",
@@ -468,7 +471,151 @@ async def setup_usuarios_iniciais():
             "role": "admin",
             "tipo_funcionario": "gestor",
             "tipo_contrato": "contrato",
-            "forma_faturamento": "salario_fixo"
+            "forma_faturamento": "salario_fixo",
+            "turno": "dia"
+        },
+        # ========== MECÂNICOS ==========
+        {
+            "name": "Daniel Ventura",
+            "email": "daniel.ventura@sistema.com",
+            "telefone": None,
+            "password": hash_password("Dott1234"),
+            "role": "colaborador",
+            "tipo_funcionario": "mecanico",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "diaria",
+            "turno": "dia",
+            "salario": 0.0
+        },
+        {
+            "name": "Timon Bekhit",
+            "email": "timon.bekhit@sistema.com",
+            "telefone": None,
+            "password": hash_password("Dott1234"),
+            "role": "colaborador",
+            "tipo_funcionario": "mecanico",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "diaria",
+            "turno": "dia",
+            "salario": 0.0
+        },
+        {
+            "name": "Jayderson Ferreira",
+            "email": "jayderson.ferreira@sistema.com",
+            "telefone": None,
+            "password": hash_password("Dott1234"),
+            "role": "colaborador",
+            "tipo_funcionario": "mecanico",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "diaria",
+            "turno": "dia",
+            "salario": 0.0
+        },
+        # ========== MOTORISTAS ==========
+        {
+            "name": "Ludovico",
+            "email": "ludovico@sistema.com",
+            "telefone": None,
+            "password": hash_password("Dott1234"),
+            "role": "colaborador",
+            "tipo_funcionario": "motorista",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "producao",
+            "turno": "dia",
+            "custo_swap": 0.0,
+            "custo_move": 0.0,
+            "custo_rebalancing": 0.0,
+            "salario": 0.0
+        },
+        {
+            "name": "Armandinho",
+            "email": "armandinho@sistema.com",
+            "telefone": None,
+            "password": hash_password("Dott1234"),
+            "role": "colaborador",
+            "tipo_funcionario": "motorista",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "producao",
+            "turno": "dia",
+            "custo_swap": 0.50,
+            "custo_move": 0.60,
+            "custo_rebalancing": 0.40,
+            "salario": 0.0
+        },
+        {
+            "name": "Mina Solimam",
+            "email": "mina.solimam@sistema.com",
+            "telefone": None,
+            "password": hash_password("Dott1234"),
+            "role": "colaborador",
+            "tipo_funcionario": "motorista",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "producao",
+            "turno": "dia",
+            "custo_swap": 0.50,
+            "custo_move": 0.60,
+            "custo_rebalancing": 0.40,
+            "salario": 0.0
+        },
+        {
+            "name": "Ayman Makram",
+            "email": "ayman.makram@sistema.com",
+            "telefone": None,
+            "password": hash_password("Dott1234"),
+            "role": "colaborador",
+            "tipo_funcionario": "motorista",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "producao",
+            "turno": "dia",
+            "custo_swap": 0.50,
+            "custo_move": 0.60,
+            "custo_rebalancing": 0.40,
+            "salario": 0.0
+        },
+        {
+            "name": "João Silva",
+            "email": "joao@test.com",
+            "telefone": None,
+            "password": hash_password("Dott1234"),
+            "role": "colaborador",
+            "tipo_funcionario": "motorista",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "producao",
+            "turno": "dia",
+            "custo_swap": 1.50,
+            "custo_move": 1.50,
+            "custo_rebalancing": 1.80,
+            "salario": 1.0
+        },
+        {
+            "name": "Maria Santos",
+            "email": "maria@sistema.com",
+            "telefone": None,
+            "password": hash_password("Dott1234"),
+            "role": "colaborador",
+            "tipo_funcionario": "motorista",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "producao",
+            "turno": "dia",
+            "custo_swap": 1.30,
+            "custo_move": 1.50,
+            "custo_rebalancing": 1.50,
+            "salario": 1.0
+        },
+        {
+            "name": "Pedro Costa",
+            "email": "pedro@sistema.com",
+            "telefone": None,
+            "password": hash_password("Dott1234"),
+            "role": "colaborador",
+            "tipo_funcionario": "motorista",
+            "tipo_contrato": "contrato",
+            "forma_faturamento": "salario_fixo",
+            "turno": "noite",
+            "custo_swap": 1.30,
+            "custo_move": 1.00,
+            "custo_rebalancing": 1.50,
+            "salario": 1400.0
         }
     ]
     
