@@ -773,11 +773,24 @@ async def create_task(task_data: TaskCreate, current_user: dict = Depends(get_cu
     return task_obj
 
 @api_router.get("/tasks", response_model=List[Task])
-async def get_tasks(data: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+async def get_tasks(
+    data: Optional[str] = None, 
+    data_inicio: Optional[str] = None,
+    data_fim: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
     query = {}
+    
     if data:
         query['data'] = data
-    elif current_user['role'] == 'colaborador':
+    elif data_inicio and data_fim:
+        query['data'] = {'$gte': data_inicio, '$lte': data_fim}
+    elif data_inicio:
+        query['data'] = {'$gte': data_inicio}
+    elif data_fim:
+        query['data'] = {'$lte': data_fim}
+    
+    if current_user['role'] == 'colaborador':
         # Colaboradores veem apenas suas tasks
         query['colaborador_id'] = current_user['id']
     
