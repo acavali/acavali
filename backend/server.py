@@ -42,7 +42,10 @@ if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
 
 def send_whatsapp_notification(to_number: str, message: str):
     """Envia notificação via WhatsApp usando Twilio"""
+    print(f"[WhatsApp] Tentando enviar para {to_number}")
+    
     if not twilio_client:
+        print("[WhatsApp] ERRO: Twilio client não configurado")
         logging.warning("Twilio client not configured, skipping WhatsApp notification")
         return False
     
@@ -56,9 +59,11 @@ def send_whatsapp_notification(to_number: str, message: str):
             body=message,
             to=f'whatsapp:{to_number}'
         )
+        print(f"[WhatsApp] ✅ Mensagem enviada! SID: {msg.sid}")
         logging.info(f"WhatsApp sent to {to_number}: {msg.sid}")
         return True
     except Exception as e:
+        print(f"[WhatsApp] ❌ ERRO ao enviar: {e}")
         logging.error(f"Failed to send WhatsApp: {e}")
         return False
 
