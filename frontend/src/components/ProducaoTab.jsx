@@ -90,6 +90,65 @@ export default function ProducaoTab() {
     }
   };
 
+  const fetchTasksMensal = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      // Get first and last day of selected month
+      const [year, month] = mesAtual.split('-');
+      const firstDay = `${mesAtual}-01`;
+      const lastDay = new Date(year, month, 0).toISOString().split('T')[0];
+      
+      const response = await axios.get(`${API}/tasks?data_inicio=${firstDay}&data_fim=${lastDay}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setTasksMensal(response.data);
+      
+      // Process data for charts - by type
+      const tasksByType = {};
+      response.data.forEach(task => {
+        if (!tasksByType[task.tipo]) {
+          tasksByType[task.tipo] = {
+            tipo: taskLabels[task.tipo] || task.tipo,
+            quantidade: 0,
+            faturamento: 0,
+            custo: 0
+          };
+        }
+        tasksByType[task.tipo].quantidade += task.quantidade;
+        tasksByType[task.tipo].faturamento += task.quantidade * (valoresContrato[task.tipo] || 3.00);
+        tasksByType[task.tipo].custo += task.custo_total;
+      });
+      
+      setChartDataMensal(Object.values(tasksByType));
+      
+      // Process data for daily chart
+      const tasksByDay = {};
+      response.data.forEach(task => {
+        const day = task.data;
+        if (!tasksByDay[day]) {
+          tasksByDay[day] = {
+            data: day,
+            dia: new Date(day).getDate(),
+            quantidade: 0,
+            faturamento: 0,
+            custo: 0
+          };
+        }
+        tasksByDay[day].quantidade += task.quantidade;
+        tasksByDay[day].faturamento += task.quantidade * (valoresContrato[task.tipo] || 3.00);
+        tasksByDay[day].custo += task.custo_total;
+      });
+      
+      // Sort by date
+      const sortedDays = Object.values(tasksByDay).sort((a, b) => a.data.localeCompare(b.data));
+      setDailyChartData(sortedDays);
+      
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao carregar produção mensal");
+    }
+  };
+
   // Group by colaborador
   const porColaborador = tasks.reduce((acc, task) => {
     if (!acc[task.colaborador_id]) {
