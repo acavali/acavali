@@ -455,40 +455,97 @@ export default function ColaboradorDashboard({ user, onLogout }) {
               />
             </div>
 
-            {/* Baterias Descarregadas - Fim do Turno */}
-            <div className="space-y-3 pt-4 border-t border-gray-200">
+            {/* Baterias Devolvidas - Fim do Turno */}
+            <div className="space-y-4 pt-4 border-t border-gray-200">
               <Label className="text-base font-semibold flex items-center gap-2">
-                <Battery className="w-5 h-5 text-red-600" />
-                Baterias Descarregadas (Devolvendo)
+                <Battery className="w-5 h-5 text-yellow-600" />
+                Baterias Devolvendo
               </Label>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-sm text-gray-600">NineBoot</Label>
-                  <Input
-                    type="number"
-                    min="0"
-                    value={fecharForm.baterias_nineboot_descarregadas}
-                    onChange={(e) => setFecharForm({ ...fecharForm, baterias_nineboot_descarregadas: parseInt(e.target.value) || 0 })}
-                    placeholder="0"
-                    className="text-center"
-                  />
+              {/* Resumo do que pegou */}
+              {(turnoAtivo?.baterias_nineboot_carregadas > 0 || turnoAtivo?.baterias_okay_carregadas > 0) && (
+                <Alert className="bg-blue-50 border-blue-200">
+                  <AlertDescription className="text-sm">
+                    <strong>Pegou no início:</strong> NineBoot: {turnoAtivo?.baterias_nineboot_carregadas || 0} | Okay: {turnoAtivo?.baterias_okay_carregadas || 0}
+                    <br/>
+                    <span className="text-xs text-gray-500">Total deve bater: carregadas + descarregadas = {(turnoAtivo?.baterias_nineboot_carregadas || 0) + (turnoAtivo?.baterias_okay_carregadas || 0)}</span>
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* NineBoot */}
+              <div className="space-y-2 p-3 bg-gray-50 rounded-lg">
+                <Label className="text-sm font-semibold">NineBoot (Pegou: {turnoAtivo?.baterias_nineboot_carregadas || 0})</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs text-green-600">🟢 Devolvendo Carregadas</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={fecharForm.baterias_nineboot_devolvidas_carregadas}
+                      onChange={(e) => setFecharForm({ ...fecharForm, baterias_nineboot_devolvidas_carregadas: parseInt(e.target.value) || 0 })}
+                      placeholder="0"
+                      className="text-center"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-red-600">🔴 Devolvendo Descarregadas</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={fecharForm.baterias_nineboot_descarregadas}
+                      onChange={(e) => setFecharForm({ ...fecharForm, baterias_nineboot_descarregadas: parseInt(e.target.value) || 0 })}
+                      placeholder="0"
+                      className="text-center"
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-sm text-gray-600">Okay</Label>
-                  <Input
-                    type="number"
-                    min="0"
-                    value={fecharForm.baterias_okay_descarregadas}
-                    onChange={(e) => setFecharForm({ ...fecharForm, baterias_okay_descarregadas: parseInt(e.target.value) || 0 })}
-                    placeholder="0"
-                    className="text-center"
-                  />
-                </div>
+                <p className="text-xs text-gray-500">
+                  Total devolvendo: {(parseInt(fecharForm.baterias_nineboot_devolvidas_carregadas) || 0) + (parseInt(fecharForm.baterias_nineboot_descarregadas) || 0)} 
+                  {turnoAtivo?.baterias_nineboot_carregadas > 0 && (
+                    <span className={((parseInt(fecharForm.baterias_nineboot_devolvidas_carregadas) || 0) + (parseInt(fecharForm.baterias_nineboot_descarregadas) || 0)) === (turnoAtivo?.baterias_nineboot_carregadas || 0) ? "text-green-600 font-bold" : "text-red-600 font-bold"}>
+                      {((parseInt(fecharForm.baterias_nineboot_devolvidas_carregadas) || 0) + (parseInt(fecharForm.baterias_nineboot_descarregadas) || 0)) === (turnoAtivo?.baterias_nineboot_carregadas || 0) ? " ✓ OK" : ` ✗ Falta ${(turnoAtivo?.baterias_nineboot_carregadas || 0) - ((parseInt(fecharForm.baterias_nineboot_devolvidas_carregadas) || 0) + (parseInt(fecharForm.baterias_nineboot_descarregadas) || 0))}`}
+                    </span>
+                  )}
+                </p>
               </div>
-              <p className="text-xs text-gray-500">
-                Quantas baterias descarregadas você está devolvendo?
-              </p>
+
+              {/* Okay */}
+              <div className="space-y-2 p-3 bg-gray-50 rounded-lg">
+                <Label className="text-sm font-semibold">Okay (Pegou: {turnoAtivo?.baterias_okay_carregadas || 0})</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs text-green-600">🟢 Devolvendo Carregadas</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={fecharForm.baterias_okay_devolvidas_carregadas}
+                      onChange={(e) => setFecharForm({ ...fecharForm, baterias_okay_devolvidas_carregadas: parseInt(e.target.value) || 0 })}
+                      placeholder="0"
+                      className="text-center"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-red-600">🔴 Devolvendo Descarregadas</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={fecharForm.baterias_okay_descarregadas}
+                      onChange={(e) => setFecharForm({ ...fecharForm, baterias_okay_descarregadas: parseInt(e.target.value) || 0 })}
+                      placeholder="0"
+                      className="text-center"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Total devolvendo: {(parseInt(fecharForm.baterias_okay_devolvidas_carregadas) || 0) + (parseInt(fecharForm.baterias_okay_descarregadas) || 0)}
+                  {turnoAtivo?.baterias_okay_carregadas > 0 && (
+                    <span className={((parseInt(fecharForm.baterias_okay_devolvidas_carregadas) || 0) + (parseInt(fecharForm.baterias_okay_descarregadas) || 0)) === (turnoAtivo?.baterias_okay_carregadas || 0) ? "text-green-600 font-bold" : "text-red-600 font-bold"}>
+                      {((parseInt(fecharForm.baterias_okay_devolvidas_carregadas) || 0) + (parseInt(fecharForm.baterias_okay_descarregadas) || 0)) === (turnoAtivo?.baterias_okay_carregadas || 0) ? " ✓ OK" : ` ✗ Falta ${(turnoAtivo?.baterias_okay_carregadas || 0) - ((parseInt(fecharForm.baterias_okay_devolvidas_carregadas) || 0) + (parseInt(fecharForm.baterias_okay_descarregadas) || 0))}`}
+                    </span>
+                  )}
+                </p>
+              </div>
             </div>
 
             {/* Cálculo Automático de Combustível */}
