@@ -408,7 +408,12 @@ export default function ColaboradorDashboard({ user, onLogout }) {
             <Alert>
               <AlertDescription>
                 <strong>Veículo:</strong> {turnoAtivo?.veiculo_placa}<br/>
-                <strong>KM Inicial:</strong> {turnoAtivo?.km_inicial.toFixed(1)}
+                <strong>KM Inicial:</strong> {turnoAtivo?.km_inicial.toFixed(1)}<br/>
+                {(turnoAtivo?.baterias_nineboot_carregadas > 0 || turnoAtivo?.baterias_okay_carregadas > 0) && (
+                  <>
+                    <strong>Baterias levadas:</strong> NineBoot: {turnoAtivo?.baterias_nineboot_carregadas || 0} | Okay: {turnoAtivo?.baterias_okay_carregadas || 0}
+                  </>
+                )}
               </AlertDescription>
             </Alert>
 
@@ -423,6 +428,42 @@ export default function ColaboradorDashboard({ user, onLogout }) {
                 data-testid="input-km-final-turno"
                 placeholder="Ex: 10150.5"
               />
+            </div>
+
+            {/* Baterias Descarregadas - Fim do Turno */}
+            <div className="space-y-3 pt-4 border-t border-gray-200">
+              <Label className="text-base font-semibold flex items-center gap-2">
+                <Battery className="w-5 h-5 text-red-600" />
+                Baterias Descarregadas (Devolvendo)
+              </Label>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-sm text-gray-600">NineBoot</Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    value={fecharForm.baterias_nineboot_descarregadas}
+                    onChange={(e) => setFecharForm({ ...fecharForm, baterias_nineboot_descarregadas: parseInt(e.target.value) || 0 })}
+                    placeholder="0"
+                    className="text-center"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm text-gray-600">Okay</Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    value={fecharForm.baterias_okay_descarregadas}
+                    onChange={(e) => setFecharForm({ ...fecharForm, baterias_okay_descarregadas: parseInt(e.target.value) || 0 })}
+                    placeholder="0"
+                    className="text-center"
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-gray-500">
+                Quantas baterias descarregadas você está devolvendo?
+              </p>
             </div>
 
             {/* Cálculo Automático de Combustível */}
