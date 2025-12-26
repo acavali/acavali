@@ -987,6 +987,8 @@ async def update_registro_veiculo(registro_id: str, registro_data: RegistroVeicu
         "km_por_litro": km_por_litro,
         "baterias_nineboot_carregadas": registro_data.baterias_nineboot_carregadas or 0,
         "baterias_okay_carregadas": registro_data.baterias_okay_carregadas or 0,
+        "baterias_nineboot_devolvidas_carregadas": registro_data.baterias_nineboot_devolvidas_carregadas or 0,
+        "baterias_okay_devolvidas_carregadas": registro_data.baterias_okay_devolvidas_carregadas or 0,
         "baterias_nineboot_descarregadas": registro_data.baterias_nineboot_descarregadas or 0,
         "baterias_okay_descarregadas": registro_data.baterias_okay_descarregadas or 0
     }
