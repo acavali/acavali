@@ -49,6 +49,7 @@ export default function Login({ onLogin }) {
         navigator.geolocation.getCurrentPosition(
           async (position) => {
             const { latitude, longitude } = position.coords;
+            console.log("📍 Localização obtida:", latitude, longitude);
             try {
               const geoResponse = await fetch(
                 `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
@@ -68,11 +69,25 @@ export default function Login({ onLogin }) {
             }
           },
           (error) => {
-            console.log("Geolocalização não disponível:", error);
+            console.log("⚠️ Geolocalização não disponível:", error.message);
+            // Mostrar aviso ao usuário
+            if (error.code === 1) {
+              console.log("Usuário negou permissão de localização");
+            } else if (error.code === 2) {
+              console.log("Localização não disponível");
+            } else if (error.code === 3) {
+              console.log("Timeout ao obter localização");
+            }
             resolve(null);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000
           }
         );
       } else {
+        console.log("⚠️ Geolocalização não suportada neste navegador");
         resolve(null);
       }
     });
