@@ -216,6 +216,11 @@ class RegistroVeiculoCreate(BaseModel):
     litros_diesel: Optional[float] = 0.0
     custo_diesel: Optional[float] = 0.0
     data: Optional[str] = None
+    # Baterias
+    baterias_nineboot_carregadas: Optional[int] = 0
+    baterias_okay_carregadas: Optional[int] = 0
+    baterias_nineboot_descarregadas: Optional[int] = 0
+    baterias_okay_descarregadas: Optional[int] = 0
 
 class RegistroVeiculo(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -233,6 +238,11 @@ class RegistroVeiculo(BaseModel):
     custo_diesel: float = 0.0
     km_por_litro: Optional[float] = 0.0
     data: str
+    # Baterias
+    baterias_nineboot_carregadas: Optional[int] = 0
+    baterias_okay_carregadas: Optional[int] = 0
+    baterias_nineboot_descarregadas: Optional[int] = 0
+    baterias_okay_descarregadas: Optional[int] = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class DespesaCreate(BaseModel):
