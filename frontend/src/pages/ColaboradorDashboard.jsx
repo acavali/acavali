@@ -343,6 +343,42 @@ export default function ColaboradorDashboard({ user, onLogout }) {
                 />
               </div>
 
+              {/* Baterias Carregadas - Início do Turno */}
+              <div className="space-y-3 pt-4 border-t border-gray-200">
+                <Label className="text-base font-semibold flex items-center gap-2">
+                  <Battery className="w-5 h-5 text-green-600" />
+                  Baterias Carregadas (Levando)
+                </Label>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-600">NineBoot</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={iniciarForm.baterias_nineboot_carregadas}
+                      onChange={(e) => setIniciarForm({ ...iniciarForm, baterias_nineboot_carregadas: parseInt(e.target.value) || 0 })}
+                      placeholder="0"
+                      className="text-center"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-600">Okay</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={iniciarForm.baterias_okay_carregadas}
+                      onChange={(e) => setIniciarForm({ ...iniciarForm, baterias_okay_carregadas: parseInt(e.target.value) || 0 })}
+                      placeholder="0"
+                      className="text-center"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Quantas baterias carregadas você está levando para o turno?
+                </p>
+              </div>
+
               <Button
                 type="submit"
                 className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700"
