@@ -877,7 +877,11 @@ async def create_registro_veiculo(registro_data: RegistroVeiculoCreate, current_
         litros_diesel=litros_diesel,
         custo_diesel=custo_diesel,
         km_por_litro=km_por_litro,
-        data=data
+        data=data,
+        baterias_nineboot_carregadas=registro_data.baterias_nineboot_carregadas or 0,
+        baterias_okay_carregadas=registro_data.baterias_okay_carregadas or 0,
+        baterias_nineboot_descarregadas=registro_data.baterias_nineboot_descarregadas or 0,
+        baterias_okay_descarregadas=registro_data.baterias_okay_descarregadas or 0
     )
     
     doc = registro_obj.model_dump()
