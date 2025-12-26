@@ -165,7 +165,11 @@ export default function ColaboradorDashboard({ user, onLogout }) {
           km_final: null,
           litros_diesel: 0,
           custo_diesel: 0,
-          data: new Date().toISOString().split('T')[0]
+          data: new Date().toISOString().split('T')[0],
+          baterias_nineboot_carregadas: parseInt(iniciarForm.baterias_nineboot_carregadas) || 0,
+          baterias_okay_carregadas: parseInt(iniciarForm.baterias_okay_carregadas) || 0,
+          baterias_nineboot_descarregadas: 0,
+          baterias_okay_descarregadas: 0
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
