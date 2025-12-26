@@ -684,6 +684,132 @@ async def setup_usuarios_iniciais():
         "total_existentes": len(usuarios_existentes)
     }
 
+@api_router.post("/setup/completo")
+async def setup_completo():
+    """
+    Endpoint para criar TODOS os dados iniciais (usuários + veículos).
+    Chamar apenas uma vez após o deploy.
+    """
+    resultado = {
+        "usuarios_criados": [],
+        "usuarios_existentes": [],
+        "veiculos_criados": [],
+        "veiculos_existentes": []
+    }
+    
+    # ========== CRIAR USUÁRIOS ==========
+    usuarios_para_criar = [
+        # ADMINS/SÓCIOS
+        {"name": "Andre Cavali", "email": "andrecavali@gmail.com", "telefone": "+39 351 835 6989", "password": hash_password("Fe@012022"), "role": "admin", "tipo_funcionario": "socio", "turno": "dia"},
+        {"name": "Osvair Colloni", "email": "osvair.colloni@pointcontroll.com", "telefone": "+39 329 278 8578", "password": hash_password("Dott1234"), "role": "admin", "tipo_funcionario": "socio", "turno": "dia"},
+        {"name": "Robsom Carboni", "email": "robsom.carboni@pointcontroll.com", "telefone": "+39 348 769 2468", "password": hash_password("Dott1234"), "role": "admin", "tipo_funcionario": "socio", "turno": "dia"},
+        # GESTORES
+        {"name": "Sergio Marciano", "email": "sergio.marciano@pointcontroll.com", "telefone": "+39 342 141 0547", "password": hash_password("Dott1234"), "role": "admin", "tipo_funcionario": "gestor", "turno": "dia"},
+        {"name": "Izabel", "email": "izabel@pointcontroll.com", "telefone": "+39 342 010 5507", "password": hash_password("Dott1234"), "role": "admin", "tipo_funcionario": "gestor", "turno": "dia"},
+        # MECÂNICOS
+        {"name": "Daniel Ventura", "email": "daniel.ventura@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "mecanico", "turno": "dia", "forma_faturamento": "diaria"},
+        {"name": "Timon Bekhit", "email": "timon.bekhit@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "mecanico", "turno": "dia", "forma_faturamento": "diaria"},
+        {"name": "Jayderson Ferreira", "email": "jayderson.ferreira@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "mecanico", "turno": "dia", "forma_faturamento": "diaria"},
+        # MOTORISTAS
+        {"name": "Ludovico", "email": "ludovico@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "motorista", "turno": "dia", "forma_faturamento": "producao", "custo_swap": 0.50, "custo_move": 0.60, "custo_rebalancing": 0.40},
+        {"name": "Armandinho", "email": "armandinho@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "motorista", "turno": "dia", "forma_faturamento": "producao", "custo_swap": 0.50, "custo_move": 0.60, "custo_rebalancing": 0.40},
+        {"name": "Mina Solimam", "email": "mina.solimam@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "motorista", "turno": "dia", "forma_faturamento": "producao", "custo_swap": 0.50, "custo_move": 0.60, "custo_rebalancing": 0.40},
+        {"name": "Ayman Makram", "email": "ayman.makram@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "motorista", "turno": "dia", "forma_faturamento": "producao", "custo_swap": 0.50, "custo_move": 0.60, "custo_rebalancing": 0.40},
+        {"name": "Paolo", "email": "paolo@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "motorista", "turno": "dia", "forma_faturamento": "producao", "custo_swap": 0.50, "custo_move": 0.60, "custo_rebalancing": 0.40},
+        {"name": "Bruno", "email": "bruno@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "motorista", "turno": "dia", "forma_faturamento": "producao", "custo_swap": 0.50, "custo_move": 0.60, "custo_rebalancing": 0.40},
+        {"name": "Alejandro", "email": "alejandro@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "motorista", "turno": "dia", "forma_faturamento": "producao", "custo_swap": 0.50, "custo_move": 0.60, "custo_rebalancing": 0.40},
+        {"name": "Boris", "email": "boris@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "motorista", "turno": "dia", "forma_faturamento": "producao", "custo_swap": 0.50, "custo_move": 0.60, "custo_rebalancing": 0.40},
+        {"name": "Luiz Paraguai", "email": "luiz.paraguai@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "motorista", "turno": "dia", "forma_faturamento": "producao", "custo_swap": 0.50, "custo_move": 0.60, "custo_rebalancing": 0.40},
+        {"name": "Claudio", "email": "claudio@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "motorista", "turno": "dia", "forma_faturamento": "producao", "custo_swap": 0.50, "custo_move": 0.60, "custo_rebalancing": 0.40},
+        {"name": "João Silva", "email": "joao@test.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "motorista", "turno": "dia", "forma_faturamento": "producao", "custo_swap": 1.50, "custo_move": 1.50, "custo_rebalancing": 1.80},
+        {"name": "Maria Santos", "email": "maria@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "motorista", "turno": "dia", "forma_faturamento": "producao", "custo_swap": 1.30, "custo_move": 1.50, "custo_rebalancing": 1.50},
+        {"name": "Pedro Costa", "email": "pedro@sistema.com", "password": hash_password("Dott1234"), "role": "colaborador", "tipo_funcionario": "motorista", "turno": "noite", "forma_faturamento": "salario_fixo", "custo_swap": 1.30, "custo_move": 1.00, "custo_rebalancing": 1.50, "salario": 1400.0},
+    ]
+    
+    for user_data in usuarios_para_criar:
+        existing = await db.users.find_one({"email": user_data["email"]})
+        if existing:
+            resultado["usuarios_existentes"].append(user_data["name"])
+            continue
+        
+        user_data["id"] = str(uuid.uuid4())
+        user_data["created_at"] = datetime.now(timezone.utc).isoformat()
+        user_data.setdefault("telefone", None)
+        user_data.setdefault("turno", "dia")
+        user_data.setdefault("cpf", None)
+        user_data.setdefault("endereco", None)
+        user_data.setdefault("tipo_contrato", "contrato")
+        user_data.setdefault("forma_faturamento", "producao")
+        user_data.setdefault("valor_diaria", 0.0)
+        user_data.setdefault("valor_por_task", 0.0)
+        user_data.setdefault("custo_swap", 0.0)
+        user_data.setdefault("custo_move", 0.0)
+        user_data.setdefault("custo_rebalancing", 0.0)
+        user_data.setdefault("salario", 0.0)
+        user_data.setdefault("bonus", 0.0)
+        user_data.setdefault("bonus_por_producao", 0.0)
+        user_data.setdefault("horas_extras", 0.0)
+        user_data.setdefault("banco", None)
+        user_data.setdefault("agencia", None)
+        user_data.setdefault("conta", None)
+        user_data.setdefault("tipo_conta", None)
+        user_data.setdefault("pix", None)
+        
+        await db.users.insert_one(user_data)
+        resultado["usuarios_criados"].append(user_data["name"])
+    
+    # ========== CRIAR VEÍCULOS ==========
+    veiculos_para_criar = [
+        {
+            "placa": "FS920JX",
+            "modelo": "OPEL - KANDANGO",
+            "tipo": "van",
+            "ano": 2022,
+            "consumo_km_por_litro": 9.09,
+            "custo_por_litro": 1.50,
+            "custo_por_bateria": 0.0,
+            "status": "disponivel"
+        },
+        {
+            "placa": "FX473DG",
+            "modelo": "Dacia",
+            "tipo": "van",
+            "ano": 2022,
+            "consumo_km_por_litro": 9.29,
+            "custo_por_litro": 1.50,
+            "custo_por_bateria": 0.0,
+            "status": "disponivel"
+        }
+    ]
+    
+    for veiculo_data in veiculos_para_criar:
+        existing = await db.veiculos.find_one({"placa": veiculo_data["placa"]})
+        if existing:
+            resultado["veiculos_existentes"].append(veiculo_data["placa"])
+            continue
+        
+        veiculo_data["id"] = str(uuid.uuid4())
+        veiculo_data["created_at"] = datetime.now(timezone.utc).isoformat()
+        
+        await db.veiculos.insert_one(veiculo_data)
+        resultado["veiculos_criados"].append(f"{veiculo_data['placa']} - {veiculo_data['modelo']}")
+    
+    return {
+        "message": "Setup completo concluído!",
+        "usuarios": {
+            "criados": resultado["usuarios_criados"],
+            "existentes": resultado["usuarios_existentes"],
+            "total_criados": len(resultado["usuarios_criados"]),
+            "total_existentes": len(resultado["usuarios_existentes"])
+        },
+        "veiculos": {
+            "criados": resultado["veiculos_criados"],
+            "existentes": resultado["veiculos_existentes"],
+            "total_criados": len(resultado["veiculos_criados"]),
+            "total_existentes": len(resultado["veiculos_existentes"])
+        }
+    }
+
 @api_router.get("/auth/me", response_model=User)
 async def get_me(current_user: dict = Depends(get_current_user)):
     if isinstance(current_user['created_at'], str):
