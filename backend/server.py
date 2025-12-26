@@ -1007,20 +1007,30 @@ async def update_registro_veiculo(registro_id: str, registro_data: RegistroVeicu
         
         # Montar informações de baterias
         baterias_info = ""
-        total_carregadas = (registro_data.baterias_nineboot_carregadas or 0) + (registro_data.baterias_okay_carregadas or 0)
-        total_descarregadas = (registro_data.baterias_nineboot_descarregadas or 0) + (registro_data.baterias_okay_descarregadas or 0)
+        total_nineboot_pegou = registro_data.baterias_nineboot_carregadas or 0
+        total_okay_pegou = registro_data.baterias_okay_carregadas or 0
         
-        if total_carregadas > 0 or total_descarregadas > 0:
+        nineboot_devolvidas_carregadas = registro_data.baterias_nineboot_devolvidas_carregadas or 0
+        nineboot_descarregadas = registro_data.baterias_nineboot_descarregadas or 0
+        okay_devolvidas_carregadas = registro_data.baterias_okay_devolvidas_carregadas or 0
+        okay_descarregadas = registro_data.baterias_okay_descarregadas or 0
+        
+        total_nineboot_devolveu = nineboot_devolvidas_carregadas + nineboot_descarregadas
+        total_okay_devolveu = okay_devolvidas_carregadas + okay_descarregadas
+        
+        if total_nineboot_pegou > 0 or total_okay_pegou > 0:
             baterias_info = f"""
 
 🔋 *Baterias:*
-   Levou carregadas:
-   • NineBoot: {registro_data.baterias_nineboot_carregadas or 0}
-   • Okay: {registro_data.baterias_okay_carregadas or 0}
+📦 *Pegou (carregadas):*
+   • NineBoot: {total_nineboot_pegou}
+   • Okay: {total_okay_pegou}
    
-   Devolveu descarregadas:
-   • NineBoot: {registro_data.baterias_nineboot_descarregadas or 0}
-   • Okay: {registro_data.baterias_okay_descarregadas or 0}"""
+📤 *Devolveu:*
+   NineBoot: {total_nineboot_devolveu} (🟢{nineboot_devolvidas_carregadas} carregadas + 🔴{nineboot_descarregadas} descarregadas)
+   Okay: {total_okay_devolveu} (🟢{okay_devolvidas_carregadas} carregadas + 🔴{okay_descarregadas} descarregadas)
+   
+✅ Conferência: NineBoot {'OK ✓' if total_nineboot_pegou == total_nineboot_devolveu else 'ERRO ✗'} | Okay {'OK ✓' if total_okay_pegou == total_okay_devolveu else 'ERRO ✗'}"""
         
         message = f"""🏁 *Point Controll - Fim de Turno*
 
