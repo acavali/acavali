@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Lock, Mail, Phone } from "lucide-react";
+import { Lock, Mail, Phone, Settings } from "lucide-react";
 import LanguageSelector from "@/components/LanguageSelector";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -20,6 +20,28 @@ export default function Login({ onLogin }) {
   const [telefone, setTelefone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [setupLoading, setSetupLoading] = useState(false);
+
+  const handleSetupUsuarios = async () => {
+    setSetupLoading(true);
+    try {
+      const response = await axios.post(`${API}/setup/usuarios`);
+      const data = response.data;
+      
+      if (data.total_criados > 0) {
+        toast.success(`✅ ${data.total_criados} usuários criados com sucesso!`);
+      } else if (data.total_existentes > 0) {
+        toast.info(`ℹ️ Usuários já existem no sistema (${data.total_existentes})`);
+      }
+      
+      console.log("Setup response:", data);
+    } catch (error) {
+      console.error("Setup error:", error);
+      toast.error("Erro ao criar usuários: " + (error.response?.data?.detail || error.message));
+    } finally {
+      setSetupLoading(false);
+    }
+  };
 
   const getLocalizacao = () => {
     return new Promise((resolve) => {
