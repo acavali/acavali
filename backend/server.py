@@ -992,6 +992,24 @@ async def update_registro_veiculo(registro_id: str, registro_data: RegistroVeicu
     # Enviar notificação WhatsApp - Fim do Turno (quando km_final é registrado)
     if registro_data.km_final and motorista.get('tipo_funcionario') == 'motorista':
         now = datetime.now(timezone.utc)
+        
+        # Montar informações de baterias
+        baterias_info = ""
+        total_carregadas = (registro_data.baterias_nineboot_carregadas or 0) + (registro_data.baterias_okay_carregadas or 0)
+        total_descarregadas = (registro_data.baterias_nineboot_descarregadas or 0) + (registro_data.baterias_okay_descarregadas or 0)
+        
+        if total_carregadas > 0 or total_descarregadas > 0:
+            baterias_info = f"""
+
+🔋 *Baterias:*
+   Levou carregadas:
+   • NineBoot: {registro_data.baterias_nineboot_carregadas or 0}
+   • Okay: {registro_data.baterias_okay_carregadas or 0}
+   
+   Devolveu descarregadas:
+   • NineBoot: {registro_data.baterias_nineboot_descarregadas or 0}
+   • Okay: {registro_data.baterias_okay_descarregadas or 0}"""
+        
         message = f"""🏁 *Point Controll - Fim de Turno*
 
 👤 Motorista: {motorista['name']}
@@ -1001,7 +1019,7 @@ async def update_registro_veiculo(registro_id: str, registro_data: RegistroVeicu
 🛣️ KM Rodado: {km_rodado} km
 ⛽ Litros: {litros_diesel:.2f} L
 💰 Custo: €{custo_diesel:.2f}
-🕐 Horário: {now.strftime('%H:%M')}
+🕐 Horário: {now.strftime('%H:%M')}{baterias_info}
 
 ✅ Turno finalizado com sucesso!"""
         
