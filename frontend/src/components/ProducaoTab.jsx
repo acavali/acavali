@@ -170,15 +170,65 @@ export default function ProducaoTab() {
 
   const colaboradoresList = Object.values(porColaborador);
   
-  // Calculate totals
+  // Calculate totals - Diário
   const totalTasks = tasks.reduce((sum, t) => sum + t.quantidade, 0);
   const totalFaturamento = tasks.reduce((sum, t) => sum + (t.quantidade * (valoresContrato[t.tipo] || 3.00)), 0);
   const totalCusto = tasks.reduce((sum, t) => sum + t.custo_total, 0);
   const lucroBruto = totalFaturamento - totalCusto;
   const margemLucro = totalFaturamento > 0 ? ((lucroBruto / totalFaturamento) * 100) : 0;
 
+  // Calculate totals - Mensal
+  const totalTasksMensal = tasksmensal.reduce((sum, t) => sum + t.quantidade, 0);
+  const totalFaturamentoMensal = tasksmensal.reduce((sum, t) => sum + (t.quantidade * (valoresContrato[t.tipo] || 3.00)), 0);
+  const totalCustoMensal = tasksmensal.reduce((sum, t) => sum + t.custo_total, 0);
+  const lucroBrutoMensal = totalFaturamentoMensal - totalCustoMensal;
+  const margemLucroMensal = totalFaturamentoMensal > 0 ? ((lucroBrutoMensal / totalFaturamentoMensal) * 100) : 0;
+
+  // Group by colaborador - Mensal
+  const porColaboradorMensal = tasksmensal.reduce((acc, task) => {
+    if (!acc[task.colaborador_id]) {
+      acc[task.colaborador_id] = {
+        nome: task.colaborador_nome,
+        turno: task.turno,
+        tasks: [],
+        total_quantidade: 0,
+        total_custo: 0,
+        total_faturamento: 0
+      };
+    }
+    acc[task.colaborador_id].tasks.push(task);
+    acc[task.colaborador_id].total_quantidade += task.quantidade;
+    acc[task.colaborador_id].total_custo += task.custo_total;
+    acc[task.colaborador_id].total_faturamento += task.quantidade * (valoresContrato[task.tipo] || 3.00);
+    return acc;
+  }, {});
+
+  const colaboradoresListMensal = Object.values(porColaboradorMensal);
+
+  // Get month name
+  const getMonthName = (dateStr) => {
+    const [year, month] = dateStr.split('-');
+    const date = new Date(year, month - 1, 1);
+    return date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  };
+
   return (
     <div className="space-y-6">
+      {/* Tabs para Diário/Mensal */}
+      <Tabs value={viewMode} onValueChange={setViewMode} className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="diario" className="flex items-center gap-2">
+            <Calendar className="w-4 h-4" />
+            Diário
+          </TabsTrigger>
+          <TabsTrigger value="mensal" className="flex items-center gap-2">
+            <CalendarDays className="w-4 h-4" />
+            Mês Atual
+          </TabsTrigger>
+        </TabsList>
+
+        {/* TAB DIÁRIO */}
+        <TabsContent value="diario">
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
