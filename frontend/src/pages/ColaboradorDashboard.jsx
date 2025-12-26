@@ -195,6 +195,25 @@ export default function ColaboradorDashboard({ user, onLogout }) {
       return;
     }
 
+    // Validar baterias - total devolvido deve ser igual ao total recebido
+    const totalNinebootRecebido = turnoAtivo.baterias_nineboot_carregadas || 0;
+    const totalOkayRecebido = turnoAtivo.baterias_okay_carregadas || 0;
+    
+    const totalNinebootDevolvido = (parseInt(fecharForm.baterias_nineboot_devolvidas_carregadas) || 0) + 
+                                    (parseInt(fecharForm.baterias_nineboot_descarregadas) || 0);
+    const totalOkayDevolvido = (parseInt(fecharForm.baterias_okay_devolvidas_carregadas) || 0) + 
+                                (parseInt(fecharForm.baterias_okay_descarregadas) || 0);
+
+    if (totalNinebootRecebido > 0 && totalNinebootDevolvido !== totalNinebootRecebido) {
+      toast.error(`Baterias NineBoot não batem! Recebeu: ${totalNinebootRecebido}, Devolvendo: ${totalNinebootDevolvido}`);
+      return;
+    }
+
+    if (totalOkayRecebido > 0 && totalOkayDevolvido !== totalOkayRecebido) {
+      toast.error(`Baterias Okay não batem! Recebeu: ${totalOkayRecebido}, Devolvendo: ${totalOkayDevolvido}`);
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       await axios.put(
@@ -205,10 +224,12 @@ export default function ColaboradorDashboard({ user, onLogout }) {
           km_inicial: turnoAtivo.km_inicial,
           km_final: parseFloat(fecharForm.km_final),
           litros_diesel: parseFloat(fecharForm.litros_diesel),
-          custo_diesel: 0, // Will be calculated by backend based on vehicle cost per liter
+          custo_diesel: 0,
           data: turnoAtivo.data,
           baterias_nineboot_carregadas: turnoAtivo.baterias_nineboot_carregadas || 0,
           baterias_okay_carregadas: turnoAtivo.baterias_okay_carregadas || 0,
+          baterias_nineboot_devolvidas_carregadas: parseInt(fecharForm.baterias_nineboot_devolvidas_carregadas) || 0,
+          baterias_okay_devolvidas_carregadas: parseInt(fecharForm.baterias_okay_devolvidas_carregadas) || 0,
           baterias_nineboot_descarregadas: parseInt(fecharForm.baterias_nineboot_descarregadas) || 0,
           baterias_okay_descarregadas: parseInt(fecharForm.baterias_okay_descarregadas) || 0
         },
