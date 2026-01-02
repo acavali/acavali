@@ -73,8 +73,8 @@ const About = () => {
             }
           ].map((item, index) => (
             <div key={index} className="bg-white rounded-2xl shadow-lg p-8">
-              <h3 className="text-2xl font-bold text-[#E63946] mb-4">{item.title}</h3>
-              <p className="text-gray-600">{item.description}</p>
+              <h3 className="text-2xl font-black mb-4 gradient-text">{item.title}</h3>
+              <p style={{ color: '#64748B' }}>{item.description}</p>
             </div>
           ))}
         </div>
