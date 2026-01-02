@@ -126,7 +126,7 @@ const Contact = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#E63946] hover:bg-[#C1121F] text-white py-4 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center space-x-2 disabled:opacity-50"
+                className="btn-primary w-full flex items-center justify-center space-x-2 disabled:opacity-50"
                 data-testid="submit-contact-form"
               >
                 {loading ? (
