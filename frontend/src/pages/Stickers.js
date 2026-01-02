@@ -190,8 +190,8 @@ const Stickers = () => {
               }
             ].map((item, index) => (
               <div key={index} className="bg-gray-50 rounded-2xl p-6 hover:shadow-lg transition-shadow">
-                <h3 className="text-xl font-bold text-[#E63946] mb-3">{item.title}</h3>
-                <p className="text-gray-600">{item.description}</p>
+                <h3 className="text-xl font-black mb-3 gradient-text">{item.title}</h3>
+                <p style={{ color: '#64748B' }}>{item.description}</p>
               </div>
             ))}
           </div>
