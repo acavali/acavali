@@ -79,7 +79,10 @@ const About = () => {
           ))}
         </div>
 
-        <div className="text-center bg-[#1D3557] text-white rounded-3xl p-12">
+        <div 
+          className="text-center text-white rounded-3xl p-12"
+          style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)' }}
+        >
           <h2 className="text-4xl font-bold mb-6">Pronto a Iniziare?</h2>
           <p className="text-xl mb-8 opacity-90">
             Contattaci oggi per un preventivo gratuito!
