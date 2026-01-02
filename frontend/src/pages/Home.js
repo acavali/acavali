@@ -16,7 +16,7 @@ const Home = () => {
       features: [
         'Projetos personalizados',
         'Materiais de alta qualidade',
-        'Instalaç ão profissional'
+        'Instalação profissional'
       ]
     },
     {
@@ -79,27 +79,37 @@ const Home = () => {
   ];
 
   const brands = [
-    { name: '3M', logo: 'https://placehold.co/150x80/1D3557/white?text=3M' },
-    { name: 'Avery Dennison', logo: 'https://placehold.co/150x80/E63946/white?text=AVERY' },
-    { name: 'HP', logo: 'https://placehold.co/150x80/1D3557/white?text=HP' },
-    { name: 'Oracal', logo: 'https://placehold.co/150x80/E63946/white?text=ORACAL' }
+    { name: '3M', logo: 'https://placehold.co/150x80/6366F1/white?text=3M' },
+    { name: 'Avery Dennison', logo: 'https://placehold.co/150x80/8B5CF6/white?text=AVERY' },
+    { name: 'HP', logo: 'https://placehold.co/150x80/EC4899/white?text=HP' },
+    { name: 'Oracal', logo: 'https://placehold.co/150x80/6366F1/white?text=ORACAL' }
   ];
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-[#1D3557] via-[#1D3557] to-[#457B9D] text-white pt-32 pb-20 overflow-hidden">
+      <section 
+        className="relative text-white pt-32 pb-20 overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)' }}
+      >
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 right-10 w-72 h-72 bg-[#E63946] rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-10 w-96 h-96 bg-[#A8DADC] rounded-full blur-3xl"></div>
+          <div 
+            className="absolute top-20 right-10 w-72 h-72 rounded-full blur-3xl"
+            style={{ background: '#6366F1' }}
+          ></div>
+          <div 
+            className="absolute bottom-20 left-10 w-96 h-96 rounded-full blur-3xl"
+            style={{ background: '#EC4899' }}
+          ></div>
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+            <div className="animate-fade-in-up">
+              <h1 className="text-5xl md:text-6xl font-black mb-6 leading-tight">
                 Fachadas de Impacto
-                <span className="text-[#E63946]"> Podem Aumentar</span> Suas Vendas em até 40%*
+                <span className="gradient-text block mt-2"> Podem Aumentar</span> 
+                Suas Vendas em até 40%*
               </h1>
               <p className="text-xl text-gray-300 mb-8">
                 Destaque sua marca com fachadas, letreiros e comunicação visual de alto impacto.
@@ -108,7 +118,7 @@ const Home = () => {
               <div className="flex flex-wrap gap-4">
                 <Link
                   to="/contact"
-                  className="bg-[#E63946] hover:bg-[#C1121F] text-white px-8 py-4 rounded-lg font-semibold flex items-center space-x-2 transition-all shadow-lg hover:shadow-xl"
+                  className="btn-primary flex items-center space-x-2"
                   data-testid="hero-cta-button"
                 >
                   <span>Solicitar Orçamento</span>
@@ -116,7 +126,7 @@ const Home = () => {
                 </Link>
                 <Link
                   to="/stickers"
-                  className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold transition-all border border-white/20"
+                  className="btn-secondary"
                 >
                   Stickers Personalizados
                 </Link>
@@ -126,12 +136,15 @@ const Home = () => {
               </p>
             </div>
             
-            <div className="relative">
-              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
+            <div className="relative animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+              <div 
+                className="glass-light rounded-3xl p-8 border"
+                style={{ borderColor: 'rgba(99, 102, 241, 0.2)' }}
+              >
                 <div className="grid grid-cols-2 gap-6">
                   {stats.map((stat, index) => (
                     <div key={index} className="text-center">
-                      <div className="text-4xl font-bold text-[#E63946] mb-2">{stat.number}</div>
+                      <div className="text-4xl font-black gradient-text mb-2">{stat.number}</div>
                       <div className="text-sm text-gray-300">{stat.label}</div>
                     </div>
                   ))}
@@ -146,10 +159,10 @@ const Home = () => {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-[#1D3557] mb-4">
+            <h2 className="text-4xl md:text-5xl font-black mb-4" style={{ color: '#0F172A' }}>
               Nossos Serviços
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl max-w-2xl mx-auto" style={{ color: '#64748B' }}>
               Soluções completas em comunicação visual para transformar seu negócio
             </p>
           </div>
@@ -163,7 +176,8 @@ const Home = () => {
           <div className="text-center mt-12">
             <Link
               to="/services"
-              className="inline-flex items-center space-x-2 text-[#E63946] hover:text-[#C1121F] font-semibold text-lg"
+              className="inline-flex items-center space-x-2 font-bold text-lg hover:opacity-80 transition-opacity"
+              style={{ color: '#6366F1' }}
             >
               <span>Ver todos os serviços</span>
               <FiArrowRight className="w-5 h-5" />
@@ -175,7 +189,7 @@ const Home = () => {
       {/* Brands Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-[#1D3557] text-center mb-12">
+          <h2 className="text-3xl font-black text-center mb-12" style={{ color: '#0F172A' }}>
             Trabalhamos Apenas com os Melhores Materiais
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
@@ -193,11 +207,14 @@ const Home = () => {
       </section>
 
       {/* Why Choose Us Section */}
-      <section className="py-20 bg-[#1D3557] text-white">
+      <section 
+        className="py-20 text-white"
+        style={{ background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)' }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold mb-8">
+              <h2 className="text-4xl font-black mb-8">
                 Por Que Escolher a Point Sign Milano?
               </h2>
               <div className="space-y-6">
@@ -211,9 +228,9 @@ const Home = () => {
                   'Prazos cumpridos rigorosamente',
                   'Preços competitivos'
                 ].map((item, index) => (
-                  <div key={index} className="flex items-start space-x-3">
-                    <div className="bg-[#E63946] rounded-full p-1 flex-shrink-0 mt-1">
-                      <FiCheck className="w-4 h-4" />
+                  <div key={index} className="flex items-start space-x-3 animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
+                    <div className="bg-white rounded-full p-1 flex-shrink-0 mt-1">
+                      <FiCheck className="w-4 h-4" style={{ color: '#6366F1' }} />
                     </div>
                     <span className="text-lg">{item}</span>
                   </div>
@@ -221,14 +238,18 @@ const Home = () => {
               </div>
             </div>
             
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
-              <h3 className="text-2xl font-bold mb-6">Solicite um Orçamento</h3>
-              <p className="text-gray-300 mb-6">
+            <div 
+              className="glass-light rounded-3xl p-8 border"
+              style={{ borderColor: 'rgba(255, 255, 255, 0.2)' }}
+            >
+              <h3 className="text-2xl font-black mb-6">Solicite um Orçamento</h3>
+              <p className="text-gray-100 mb-6">
                 Preencha o formulário e nossa equipe entrará em contato em até 24 horas.
               </p>
               <Link
                 to="/contact"
-                className="block w-full bg-[#E63946] hover:bg-[#C1121F] text-white text-center px-6 py-4 rounded-lg font-semibold transition-all"
+                className="block w-full bg-white text-center px-6 py-4 rounded-full font-bold transition-all hover:scale-105"
+                style={{ color: '#6366F1' }}
               >
                 Falar com Consultor
               </Link>
@@ -238,9 +259,12 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-[#E63946] to-[#C1121F] text-white">
+      <section 
+        className="py-20 text-white"
+        style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)' }}
+      >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-4xl md:text-5xl font-black mb-6">
             Pronto Para Transformar Seu Negócio?
           </h2>
           <p className="text-xl mb-8 opacity-90">
@@ -249,13 +273,13 @@ const Home = () => {
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               to="/contact"
-              className="bg-white text-[#E63946] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all shadow-lg"
+              className="btn-white"
             >
               Falar no WhatsApp
             </Link>
             <Link
               to="/portfolio"
-              className="bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/20 transition-all border border-white/30"
+              className="btn-secondary"
             >
               Ver Portfolio
             </Link>
