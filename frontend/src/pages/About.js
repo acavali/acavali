@@ -37,7 +37,10 @@ const About = () => {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-[#E63946] to-[#C1121F] text-white rounded-3xl p-12 mb-20">
+        <div 
+          className="text-white rounded-3xl p-12 mb-20"
+          style={{ background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)' }}
+        >
           <div className="grid md:grid-cols-3 gap-8 text-center">
             <div>
               <h3 className="text-5xl font-bold mb-2">15+</h3>
