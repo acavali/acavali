@@ -58,10 +58,13 @@ const Stickers = () => {
   return (
     <div className="min-h-screen pt-20">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-[#E63946] to-[#C1121F] text-white py-20 overflow-hidden">
+      <section 
+        className="relative text-white py-20 overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)' }}
+      >
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-10 right-10 w-64 h-64 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 left-10 w-80 h-80 bg-[#1D3557] rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 left-10 w-80 h-80 rounded-full blur-3xl" style={{ background: '#0F172A' }}></div>
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
