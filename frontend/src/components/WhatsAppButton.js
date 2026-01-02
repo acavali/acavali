@@ -11,19 +11,31 @@ const WhatsAppButton = () => {
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-8 right-8 bg-gradient-to-br from-[#25D366] to-[#128C7E] hover:from-[#128C7E] hover:to-[#25D366] text-white p-5 rounded-full shadow-2xl hover:scale-110 transition-all duration-300 z-50 group animate-float"
+      className="fixed bottom-8 right-8 bg-gradient-to-br from-[#25D366] to-[#128C7E] hover:scale-110 text-white p-5 rounded-full shadow-2xl transition-all duration-300 z-50 group"
+      style={{ 
+        animation: 'float 3s ease-in-out infinite',
+        boxShadow: '0 10px 30px rgba(37, 211, 102, 0.3)'
+      }}
       data-testid="whatsapp-button"
     >
       <FaWhatsapp className="w-8 h-8 group-hover:rotate-12 transition-transform duration-300" />
       
-      {/* Pulse rings */}
-      <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-75"></span>
-      <span className="absolute inset-0 rounded-full bg-[#25D366] animate-pulse opacity-50"></span>
+      {/* Pulse ring */}
+      <span 
+        className="absolute inset-0 rounded-full animate-ping opacity-75"
+        style={{ background: '#25D366' }}
+      ></span>
       
       {/* Tooltip */}
-      <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 glass-dark text-white text-sm px-4 py-3 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap font-semibold shadow-xl">
+      <span 
+        className="absolute right-full mr-4 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap font-semibold shadow-xl px-4 py-3 rounded-xl text-sm"
+        style={{
+          background: 'rgba(15, 23, 42, 0.9)',
+          backdropFilter: 'blur(10px)',
+          color: 'white'
+        }}
+      >
         💬 Fale conosco!
-        <span className="absolute left-full top-1/2 -translate-y-1/2 border-8 border-transparent border-l-gray-900/30"></span>
       </span>
     </a>
   );
