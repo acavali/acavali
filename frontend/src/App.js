@@ -33,8 +33,8 @@ const Services = () => (
           { title: 'Têxtil', desc: 'Uniformes e camisetas' }
         ].map((service, index) => (
           <div key={index} className="bg-white p-8 rounded-2xl shadow-lg">
-            <h3 className="text-2xl font-bold text-[#E63946] mb-3">{service.title}</h3>
-            <p className="text-gray-600">{service.desc}</p>
+            <h3 className="text-2xl font-black mb-3 gradient-text">{service.title}</h3>
+            <p style={{ color: '#64748B' }}>{service.desc}</p>
           </div>
         ))}
       </div>
