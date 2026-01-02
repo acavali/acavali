@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FiArrowRight, FiCheck } from 'react-icons/fi';
 import { 
   FaStore, FaPaintBrush, FaLightbulb, FaTruck, 
-  FaSignsPost, FaTshirt 
+  FaSignLanguage, FaTshirt 
 } from 'react-icons/fa';
 import ServiceCard from '../components/ServiceCard';
 
@@ -50,7 +50,7 @@ const Home = () => {
       ]
     },
     {
-      icon: <FaSignsPost />,
+      icon: <FaSignLanguage />,
       title: 'Sinalização',
       description: 'Placas e sinalizações para todos os ambientes.',
       features: [
