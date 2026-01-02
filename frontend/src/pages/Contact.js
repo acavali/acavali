@@ -211,7 +211,7 @@ const Contact = () => {
                 href="https://wa.me/393484520701?text=Olá!%20Gostaria%20de%20mais%20informações"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-full bg-[#25D366] hover:bg-[#20BA5A] text-white text-center py-4 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg"
+                className="btn-white block w-full text-center"
               >
                 Apri WhatsApp
               </a>
