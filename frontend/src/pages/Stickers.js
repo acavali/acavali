@@ -222,9 +222,12 @@ const Stickers = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-[#E63946] to-[#C1121F] text-white">
+      <section 
+        className="py-20 text-white"
+        style={{ background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)' }}
+      >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-4xl md:text-5xl font-black mb-6">
             Tocca con mano i nostri prodotti!
           </h2>
           <p className="text-xl mb-8 opacity-90">
@@ -234,7 +237,7 @@ const Stickers = () => {
             href="https://wa.me/393484520701?text=Vorrei%20richiedere%20campioni%20gratuiti"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-white text-[#E63946] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all shadow-lg"
+            className="btn-white"
           >
             Richiedi Campioni Gratuiti
           </a>
