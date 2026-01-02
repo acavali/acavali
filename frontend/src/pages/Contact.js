@@ -47,7 +47,7 @@ const Contact = () => {
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Contact Form */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-[#1D3557] mb-6">Invia un Messaggio</h2>
+            <h2 className="text-3xl font-black mb-6" style={{ color: '#0F172A' }}>Invia un Messaggio</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
