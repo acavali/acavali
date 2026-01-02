@@ -40,8 +40,8 @@ const Contact = () => {
     <div className="min-h-screen pt-32 pb-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-[#1D3557] mb-4">Contatti</h1>
-          <p className="text-xl text-gray-600">Siamo qui per aiutarti! Contattaci oggi stesso.</p>
+          <h1 className="text-5xl font-black mb-4" style={{ color: '#0F172A' }}>Contatti</h1>
+          <p className="text-xl" style={{ color: '#64748B' }}>Siamo qui per aiutarti! Contattaci oggi stesso.</p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12">
