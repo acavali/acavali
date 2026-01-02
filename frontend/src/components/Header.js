@@ -17,24 +17,24 @@ const Header = () => {
     { path: '/services', label: 'Servizi' },
     { path: '/portfolio', label: 'Portfolio' },
     { path: '/stickers', label: 'Stickers' },
-    { path: '/brands', label: 'Marchi' },
-    { path: '/blog', label: 'Blog' },
     { path: '/contact', label: 'Contatti' },
   ];
 
   return (
-    <header className="fixed top-0 w-full glass z-50 border-b border-white/10 shadow-xl">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="fixed top-0 w-full glass z-50 border-b border-gray-200/30" style={{ borderBottomColor: 'rgba(99, 102, 241, 0.1)' }}>
+      <nav className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-12 h-12 gradient-red rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 relative overflow-hidden">
-              <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-              <span className="text-white font-black text-2xl relative z-10">P</span>
+            <div 
+              className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-all duration-300 relative overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)' }}
+            >
+              <div className="w-5 h-5 bg-white rounded-sm transform rotate-45"></div>
             </div>
             <div>
-              <h1 className="text-xl font-black text-[#1D3557] tracking-tight">Point Sign</h1>
-              <p className="text-xs text-gray-500 font-semibold">Milano</p>
+              <h1 className="text-xl font-black tracking-tight gradient-text">Point Sign</h1>
+              <p className="text-xs font-semibold" style={{ color: '#64748B' }}>Milano</p>
             </div>
           </Link>
 
@@ -44,16 +44,31 @@ const Header = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 relative overflow-hidden group ${
+                className={`relative px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${
                   isActive(link.path)
-                    ? 'bg-gradient-to-r from-[#E63946] to-[#FF6B35] text-white shadow-lg'
-                    : 'text-gray-700 hover:bg-gray-50'
+                    ? 'text-white'
+                    : ''
                 }`}
+                style={{
+                  background: isActive(link.path) ? 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)' : 'transparent',
+                  color: isActive(link.path) ? 'white' : '#0F172A'
+                }}
               >
                 {!isActive(link.path) && (
-                  <span className="absolute inset-0 bg-gradient-to-r from-[#E63946] to-[#FF6B35] opacity-0 group-hover:opacity-10 transition-opacity"></span>
+                  <>
+                    <span className="relative z-10">{link.label}</span>
+                    <span 
+                      className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 transition-all duration-300 group-hover:w-3/4"
+                      style={{ 
+                        background: 'linear-gradient(to right, #6366F1, #EC4899)',
+                        opacity: 0
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.opacity = 1}
+                      onMouseLeave={(e) => e.currentTarget.style.opacity = 0}
+                    ></span>
+                  </>
                 )}
-                <span className="relative z-10">{link.label}</span>
+                {isActive(link.path) && link.label}
               </Link>
             ))}
           </div>
@@ -62,26 +77,29 @@ const Header = () => {
           <div className="flex items-center space-x-4">
             <Link
               to="/cart"
-              className="relative p-3 hover:bg-gradient-to-r hover:from-[#E63946]/10 hover:to-[#FF6B35]/10 rounded-xl transition-all duration-300 group"
+              className="relative p-3 hover:bg-gray-50 rounded-xl transition-all duration-300 group"
               data-testid="cart-button"
             >
-              <FiShoppingCart className="w-6 h-6 text-gray-700 group-hover:scale-110 transition-transform" />
+              <FiShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform" style={{ color: '#0F172A' }} />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-[#E63946] to-[#FF6B35] text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg animate-pulse-slow">
+                <span 
+                  className="absolute -top-1 -right-1 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg animate-pulse-slow"
+                  style={{ background: 'linear-gradient(135deg, #6366F1, #EC4899)' }}
+                >
                   {cartCount}
                 </span>
               )}
             </Link>
 
             <button
-              className="lg:hidden p-3 hover:bg-gray-100 rounded-xl transition-all"
+              className="lg:hidden p-3 hover:bg-gray-50 rounded-xl transition-all"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               data-testid="mobile-menu-toggle"
             >
               {isMenuOpen ? (
-                <FiX className="w-6 h-6 text-gray-700" />
+                <FiX className="w-6 h-6" style={{ color: '#0F172A' }} />
               ) : (
-                <FiMenu className="w-6 h-6 text-gray-700" />
+                <FiMenu className="w-6 h-6" style={{ color: '#0F172A' }} />
               )}
             </button>
           </div>
@@ -89,7 +107,7 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-gray-200 animate-fade-in">
+          <div className="lg:hidden py-4 border-t border-gray-200/30 animate-fade-in">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -97,9 +115,13 @@ const Header = () => {
                 onClick={() => setIsMenuOpen(false)}
                 className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-1 ${
                   isActive(link.path)
-                    ? 'bg-gradient-to-r from-[#E63946] to-[#FF6B35] text-white'
-                    : 'text-gray-700 hover:bg-gray-50'
+                    ? 'text-white'
+                    : ''
                 }`}
+                style={{
+                  background: isActive(link.path) ? 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)' : 'transparent',
+                  color: isActive(link.path) ? 'white' : '#0F172A'
+                }}
               >
                 {link.label}
               </Link>
