@@ -70,7 +70,7 @@ const Brands = () => (
         {['3M', 'Avery', 'HP', 'Oracal'].map((brand, index) => (
           <div key={index} className="bg-white p-8 rounded-2xl shadow-lg flex items-center justify-center">
             <img
-              src={`https://placehold.co/200x100/${index % 2 === 0 ? '1D3557' : 'E63946'}/white?text=${brand}`}
+              src={`https://placehold.co/200x100/${index % 3 === 0 ? '6366F1' : index % 3 === 1 ? '8B5CF6' : 'EC4899'}/white?text=${brand}`}
               alt={brand}
               className="h-20 object-contain"
             />
