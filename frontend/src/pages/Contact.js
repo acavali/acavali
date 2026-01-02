@@ -148,8 +148,8 @@ const Contact = () => {
               
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="bg-white/20 p-3 rounded-lg">
-                    <FiMapPin className="w-6 h-6" />
+                  <div className="p-3 rounded-lg" style={{ background: 'rgba(99, 102, 241, 0.1)' }}>
+                    <FiMapPin className="w-6 h-6" style={{ color: '#6366F1' }} />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Indirizzo</h3>
