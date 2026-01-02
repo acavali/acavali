@@ -50,7 +50,7 @@ const Portfolio = () => (
         {Array.from({ length: 9 }).map((_, index) => (
           <div key={index} className="aspect-square bg-gray-300 rounded-xl overflow-hidden shadow-lg">
             <img
-              src={`https://placehold.co/400x400/${index % 2 === 0 ? 'E63946' : '1D3557'}/white?text=Projeto+${index + 1}`}
+              src={`https://placehold.co/400x400/${index % 3 === 0 ? '6366F1' : index % 3 === 1 ? '8B5CF6' : 'EC4899'}/white?text=Projeto+${index + 1}`}
               alt={`Projeto ${index + 1}`}
               className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
             />
