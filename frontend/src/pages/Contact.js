@@ -143,7 +143,10 @@ const Contact = () => {
 
           {/* Contact Info */}
           <div className="space-y-6">
-            <div className="bg-gradient-to-br from-[#1D3557] to-[#457B9D] text-white rounded-2xl shadow-lg p-8">
+            <div 
+              className="bg-gradient-to-br text-white rounded-2xl shadow-lg p-8"
+              style={{ background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)' }}
+            >
               <h2 className="text-3xl font-bold mb-6">Informazioni di Contatto</h2>
               
               <div className="space-y-6">
