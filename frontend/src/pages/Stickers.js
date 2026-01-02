@@ -115,11 +115,16 @@ const Stickers = () => {
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-6 py-3 rounded-full font-semibold transition-all ${
+                className={`px-6 py-3 rounded-full font-bold transition-all ${
                   selectedCategory === category.id
-                    ? 'bg-[#E63946] text-white shadow-lg'
+                    ? 'text-white shadow-lg'
                     : 'bg-white text-gray-700 hover:bg-gray-100 shadow-md'
                 }`}
+                style={{
+                  background: selectedCategory === category.id 
+                    ? 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)' 
+                    : 'white'
+                }}
                 data-testid={`category-${category.id}`}
               >
                 {category.name}
