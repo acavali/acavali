@@ -128,7 +128,7 @@ const Cart = () => {
 
               <Link
                 to="/checkout"
-                className="block w-full bg-[#E63946] hover:bg-[#C1121F] text-white text-center py-4 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg mb-3"
+                className="btn-primary block w-full text-center"
                 data-testid="checkout-button"
               >
                 Procedi al Checkout
