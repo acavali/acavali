@@ -161,8 +161,8 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="bg-white/20 p-3 rounded-lg">
-                    <FiPhone className="w-6 h-6" />
+                  <div className="p-3 rounded-lg" style={{ background: 'rgba(139, 92, 246, 0.1)' }}>
+                    <FiPhone className="w-6 h-6" style={{ color: '#8B5CF6' }} />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Telefono</h3>
@@ -173,8 +173,8 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="bg-white/20 p-3 rounded-lg">
-                    <FiMail className="w-6 h-6" />
+                  <div className="p-3 rounded-lg" style={{ background: 'rgba(236, 72, 153, 0.1)' }}>
+                    <FiMail className="w-6 h-6" style={{ color: '#EC4899' }} />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Email</h3>
@@ -185,8 +185,8 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="bg-white/20 p-3 rounded-lg">
-                    <FiClock className="w-6 h-6" />
+                  <div className="p-3 rounded-lg" style={{ background: 'rgba(99, 102, 241, 0.1)' }}>
+                    <FiClock className="w-6 h-6" style={{ color: '#6366F1' }} />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Orari di Apertura</h3>
