@@ -89,7 +89,7 @@ const About = () => {
           </p>
           <Link
             to="/contact"
-            className="inline-block bg-[#E63946] hover:bg-[#C1121F] text-white px-8 py-4 rounded-lg font-semibold transition-all shadow-lg"
+            className="btn-primary"
           >
             Contattaci
           </Link>
