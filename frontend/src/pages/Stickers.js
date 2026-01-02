@@ -84,12 +84,12 @@ const Stickers = () => {
       </section>
 
       {/* Features Bar */}
-      <section className="bg-[#1D3557] text-white py-8">
+      <section className="text-white py-8" style={{ background: '#0F172A' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {features.map((feature, index) => (
               <div key={index} className="flex items-center justify-center space-x-3">
-                <div className="text-[#E63946] text-xl">{feature.icon}</div>
+                <div className="text-xl" style={{ color: '#EC4899' }}>{feature.icon}</div>
                 <span className="font-semibold">{feature.text}</span>
               </div>
             ))}
