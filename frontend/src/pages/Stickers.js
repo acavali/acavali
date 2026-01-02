@@ -208,7 +208,7 @@ const Stickers = () => {
             {['3M', 'Avery', 'HP', 'Oracal'].map((brand, index) => (
               <div key={index} className="bg-white rounded-xl p-6 flex items-center justify-center shadow-md">
                 <img
-                  src={`https://placehold.co/150x80/${index % 2 === 0 ? '1D3557' : 'E63946'}/white?text=${brand}`}
+                  src={`https://placehold.co/150x80/${index % 2 === 0 ? '6366F1' : 'EC4899'}/white?text=${brand}`}
                   alt={brand}
                   className="h-16 object-contain"
                 />
