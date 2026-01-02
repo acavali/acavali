@@ -5,12 +5,12 @@ import { FaWhatsapp, FaFacebook, FaInstagram, FaLinkedin } from 'react-icons/fa'
 
 const Footer = () => {
   return (
-    <footer className="bg-[#1D3557] text-white">
+    <footer style={{ background: '#0F172A', color: 'rgba(255, 255, 255, 0.9)' }} className="text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Point Sign Milano</h3>
+            <h3 className="text-xl font-black mb-4 gradient-text">Point Sign Milano</h3>
             <p className="text-gray-300 text-sm mb-4">
               Comunicazione visiva creativa e stampa digitale professionale a Milano.
             </p>
